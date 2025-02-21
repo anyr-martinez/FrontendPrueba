@@ -1,22 +1,24 @@
 // Base URL
-export const Servidor = 'http://localhost:3000/api/';
+export const Servidor = 'http://localhost:3000';
 
 // Usuario endpoints
-export const UsuarioIniciarSesion = 'usuarios/login';
-export const UsuarioActualizarContrasena = 'usuarios/actualizar-contrasena';
-export const ListarUsuarios = 'usuarios';
-export const CrearUsuario = 'usuarios/crear';
+export const UsuarioIniciarSesion = '/api/users/login';
+export const ActualizarContrasena = 'users/updateUser/{id}';
+export const ListarUsuarios = '/api/users/user';
+export const UsuarioExistente = '/api/users/{id}';
+export const ActualizarUsuario = '/api/users/updateUser/{id}';
+export const CrearUsuario = '/api/users/register';
 
 // Equipos endpoints
-export const CrearEquipo = 'equipos';
-export const ListarEquipos = 'equipos';
-export const ObtenerEquipo = 'equipos/:id';
-export const EditarEquipo = 'equipos/:id';
-export const EliminarEquipo = 'equipos/:id';
+export const CrearEquipo = '/api/equipment/create';
+export const ListarEquipos = '/api/equipment/equipments';
+export const ObtenerEquipoById = '/api/equipment/equipments/{id}';
+export const ActualizarEquipo = '/api/equipment/updateEquipment/{id}';
+export const EliminarEquipo = '/api/equipment/deleteEquipment';
 
 // Mantenimiento endpoints
-export const CrearMantenimiento = 'mantenimientos';
-export const ListarMantenimientos = 'mantenimientos';
-export const ObtenerMantenimiento = 'mantenimientos/:id';
-export const EditarMantenimiento = 'mantenimientos/:id';
-export const EliminarMantenimiento = 'mantenimientos/:id';
+export const CrearMantenimiento = '/api/maintenance/create';
+export const ListarMantenimientos = '/api/maintenance/maintenances';
+export const ObtenerMantenimientoById = '/api/maintenance/maintenance/{id}';
+export const ActualizarMantenimiento = '/api/maintenance/updateMaintenance/{id}';
+export const EliminarMantenimiento = '/api/maintenance/deleteMaintenance/{id_mantenimiento}';

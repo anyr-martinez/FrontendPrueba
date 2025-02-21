@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { UserContext } from "../Context/user/UserContext";
-import { mostraAlertaError } from "../SweetAlert/SweetAlert";
+import { useContextUsuario } from "../Context/user/UserContext";
+import { mostrarAlertaError } from "../SweetAlert/SweetAlert";
 
 export const AutenticacionRoute = ({ children})=>{
-    const {token} = UserContext();
+    const {token} = useContextUsuario();
     if (!token){
-        mostraAlertaError("Token Invalido");
+        mostrarAlertaError("Token Invalido");
         return <Navigate to="/" />;
     }
     return children ? children : <Outlet />;

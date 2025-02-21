@@ -1,16 +1,14 @@
 import React from 'react';
-import { Navigate, useOutlet } from "react-router-dom";
-import { mostraAlertaError } from "../SweetAlert/SweetAlert";
-import { equipmentState} from "../Context/equipment/equimentState"
-import { UserContext } from "../Context/user/UserContext";
-import Equimpents from '../Equipments/Equipments';
+import { useOutlet } from "react-router-dom";
+import { useContextUsuario } from "../Context/user/UserContext"; 
+import Equipments from '../Equipments/Equipments';
 
 export const EquipmentsLayout = () => {
   const outlet = useOutlet();
-  const { user } = UserContext();
+  const { usuario } = useContextUsuario(); 
   return (
     <equipmentState>
-      <Equimpents />
+      <Equipments />
     </equipmentState>
   );
 };

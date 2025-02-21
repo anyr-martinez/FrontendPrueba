@@ -1,7 +1,7 @@
 import swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-const MySwal = withReactContent(swal); 
+const MySwal = withReactContent(swal);
 const swalWithBootstrapButtons = MySwal.mixin({
     customClass: {
         confirmButton: 'btn btn-success',
@@ -10,7 +10,7 @@ const swalWithBootstrapButtons = MySwal.mixin({
     buttonsStyling: false
 });
 
-export function mostraAlerta(mensaje, icono, foco) {
+export function mostrarAlerta(mensaje, icono = "info", foco = "") {
     MySwal.fire({
         title: mensaje,
         icon: icono,
@@ -19,36 +19,35 @@ export function mostraAlerta(mensaje, icono, foco) {
             confirmButton: 'btn-primary',
         },
     });
-} 
+    enfocarCampo(foco);
+}
 
-export function mostraAlertaOK(mensaje, icono, foco) {
+export function mostrarAlertaOK(mensaje, icono = "success", foco = "") {
     MySwal.fire({
         title: mensaje,
-        icon: 'success',
+        icon: icono,
         confirmButtonText: 'Aceptar',
         showConfirmButton: false,
         timer: 1500,
     });
+    enfocarCampo(foco);
 }
 
-export function mostrarAlertaPregunta(accion, mensaje, icono, foco) {
+export function mostrarAlertaPregunta(accion, mensaje, foco = "") {
     MySwal.fire({
         title: mensaje,
         icon: 'question',
-        confirmButtonText: 'Si',
+        confirmButtonText: 'Sí',
         showConfirmButton: true,
         cancelButtonText: 'No',
         showCancelButton: true,
-    }).then((re) => {
-        if (re.isConfirmed) {
-            accion(true);
-        } else {
-            accion(false);
-        }
+    }).then((result) => {
+        accion(result.isConfirmed);
     });
+    enfocarCampo(foco);
 }
 
-export function mostraAlertaError(mensaje, icono, foco) {
+export function mostrarAlertaError(mensaje, foco = "") {
     MySwal.fire({
         title: mensaje,
         icon: 'error',
@@ -56,9 +55,10 @@ export function mostraAlertaError(mensaje, icono, foco) {
         showConfirmButton: false,
         timer: 3000
     });
+    enfocarCampo(foco);
 }
 
-export function mostraAlertaWarning(mensaje, icono, foco) {
+export function mostrarAlertaWarning(mensaje, foco = "") {
     MySwal.fire({
         title: mensaje,
         icon: 'warning',
@@ -66,36 +66,33 @@ export function mostraAlertaWarning(mensaje, icono, foco) {
         showConfirmButton: false,
         timer: 3000
     });
+    enfocarCampo(foco);
 }
 
-export function mostraAlertaModificar(titulo, mensaje, peticion) {
+export function mostrarAlertaModificar(titulo, mensaje, peticion) {
     swalWithBootstrapButtons.fire({
         title: titulo,
         text: mensaje,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Modificar',
-        cancelButtonText: 'Cancel!',
+        cancelButtonText: 'Cancelar',
         reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
-            swalWithBootstrapButtons.fire(
-                'Modificado',
-                'Registro Modificado',
-                'success'
-            );
-        } else if (result.dismiss === swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire(
-                'Cancelled',
-                'Your imaginary file is safe :)',
-                'error'
-            );
+            peticion();
+            swalWithBootstrapButtons.fire('Modificado', 'Registro Modificado', 'success');
+        } else {
+            swalWithBootstrapButtons.fire('Cancelado', 'No se realizaron cambios', 'error');
         }
     });
 }
 
-function onFocus(foco) {
-    if (foco !== '') {
-        document.getElementById(foco).focus();
+function enfocarCampo(foco) {
+    if (foco) {
+        const element = document.getElementById(foco);
+        if (element) {
+            element.focus();
+        }
     }
 }

@@ -2,84 +2,78 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import fondo from "../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faLock,  faUser } from "@fortawesome/free-solid-svg-icons";
 import { UsuarioIniciarSesion } from "../Configuration/ApiUrls";
 import { AxiosPublico } from "../Axios/Axios";
 import {
-  mostraAlerta,
-  mostraAlertaOK,
-  mostraAlertaError,
+  mostrarAlerta,
+  mostrarAlertaOK,
+  mostrarAlertaError,
 } from "../SweetAlert/SweetAlert";
 import { UserContext } from "../Context/user/UserContext";
 import { useSessionStorage } from "../Context/storage/useSessionStorage";
-import useSpecialLogin from "../../hooks/useSpecialLogin"; // Importar el hook personalizado
+import useSpecialLogin from "../../hooks/useSpecialLogin"; // Hook personalizado
 
 const Login = () => {
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
+  const [usuario, setUsuario] = useState("");
+  const [contrasena, setPassword] = useState("");
   const navigate = useNavigate();
-  const [error, setError] = useState("");
   const { setLogin } = useContext(UserContext);
-  const [storedUser, setStoredUser] = useSessionStorage("user", "");
-  const { checkSpecialLogin } = useSpecialLogin(); // Usar el hook personalizado
+  const [, setStoredUser] = useSessionStorage("user", "");
+  const { checkSpecialLogin } = useSpecialLogin();
 
   useEffect(() => {
-    setLogin({ user: null, token: null });
+    setLogin({ usuario: null, token: null });
   }, [setLogin]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    if (!user || !password) {
-      mostraAlerta("Por favor, complete todos los campos.", "warning");
+  
+    if (!usuario || !contrasena) {
+      mostrarAlerta("Por favor, complete todos los campos.", "warning");
       return;
     }
-
-    // Verificar credenciales específicas para registro de docente
-    if (checkSpecialLogin(user, password)) {
+  
+    if (checkSpecialLogin(usuario, contrasena)) {
       return;
     }
-
+  
     try {
       const response = await AxiosPublico.post(UsuarioIniciarSesion, {
-        login: user,
-        contrasena: password,
+        usuario: usuario,
+        contrasena: contrasena,
       });
-
-      if (response && response.data) {
-        const { Token, Usuario } = response.data;
-
+      console.log(response);
+  
+      if (response?.data && response.data.usuario) {
+        const { token, usuario } = response.data;
+  
+        // Guardar sesión
         setLogin({
           usuario: {
-            nombre: Usuario.nombre,
-            usuario: Usuario.usuario,
-            login: Usuario.login,
-            id: Usuario.id,
+            usuario: usuario.usuario,
+            login: usuario.login,
+            id: usuario.id,
           },
-          token: Token,
+          token: token,
         });
-
-        setStoredUser(user); // Guardar el email en sessionStorage
-
-        if (Usuario.tipo === "Usuario") {
-          navigate("/dashboard-equipments");
-        } else {
-          navigate("/");
-        }
-
-        mostraAlertaOK("Inicio de sesión exitoso", "success");
+  
+        // Guardar en sessionStorage
+        setStoredUser(usuario);
+  
+        // Redirigir al menú principal (dashboard)
+        navigate("/Home", { state: { userId: usuario.id } });
+  
+        mostrarAlertaOK("Inicio de sesión exitoso", "success");
       } else {
-        mostraAlertaError(
-          "Error en el inicio de sesión. Por favor, inténtelo de nuevo.",
-          "error"
-        );
+        mostrarAlertaError("Error en el inicio de sesión. Inténtelo de nuevo.");
       }
     } catch (error) {
-      mostraAlertaError(
-        "Contraseña o Correo electrónico incorrecto.",
-        "error"
-      );
+      console.error("Error al iniciar sesión:", error);
+      mostrarAlertaError("Usuario o contraseña incorrectos.");
     }
+
+  
   };
 
   return (
@@ -87,31 +81,31 @@ const Login = () => {
       className="d-flex align-items-center justify-content-center bg-light"
       style={{
         backgroundImage: `url(${fondo})`,
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         backgroundPosition: "center",
         height: "100vh",
+        width: "100vw",
       }}
+      
     >
       <div
         className="p-4 rounded shadow"
         style={{
           maxWidth: "400px",
           width: "100%",
-          backgroundColor: "rgba(255, 255, 255, 0.75)",
+          backgroundColor: "rgba(255, 255, 255, 0.85)",
         }}
       >
         <h2 className="text-center mb-4">Inicio de Sesión</h2>
-
-        {error && <p className="text-danger text-center">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group position-relative">
             <input
               type="text"
               className="form-control"
-              placeholder="Email"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
+              placeholder="Usuario"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
               autoComplete="username"
             />
             <span
@@ -122,7 +116,7 @@ const Login = () => {
                 transform: "translateY(-50%)",
               }}
             >
-              <FontAwesomeIcon icon={faEnvelope} />
+              <FontAwesomeIcon icon={faUser} />
             </span>
           </div>
 
@@ -131,7 +125,7 @@ const Login = () => {
               type="password"
               className="form-control"
               placeholder="Password"
-              value={password}
+              value={contrasena}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
             />
@@ -148,7 +142,7 @@ const Login = () => {
           </div>
 
           <button type="submit" className="btn btn-primary btn-block">
-            Sign In
+            Iniciar sesión
           </button>
 
           <div className="text-center my-3 position-relative">
@@ -172,15 +166,7 @@ const Login = () => {
               }}
             />
           </div>
-
-          <Link
-            to="/recuperar-contrasena"
-            className="btn btn btn-info btn-block mb-2"
-          >
-            Olvidé la Contraseña
-          </Link>
-
-          <Link to="/registro-estudiante" className="btn btn-info btn-block">
+          <Link to="/registro-usuario" className="btn btn-info btn-block">
             Crear Cuenta
           </Link>
         </form>

@@ -4,7 +4,7 @@ import fondo from "../../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey, faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { AxiosPublico } from "../../Axios/Axios";
-import { mostraAlertaOK, mostraAlertaError } from "../../SweetAlert/SweetAlert";
+import { mostrarAlertaOK, mostrarAlertaError } from "../../SweetAlert/SweetAlert";
 import zxcvbn from "zxcvbn";
 
 const ActualizarContrasena = () => {
@@ -27,12 +27,12 @@ const ActualizarContrasena = () => {
     event.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      mostraAlertaError("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.", "error");
+      mostrarAlertaError("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.", "error");
       return;
     }
 
     if (!newPassword || !confirmPassword) {
-      mostraAlertaError("Por favor complete todos los campos.", "error");
+      mostrarAlertaError("Por favor complete todos los campos.", "error");
       return;
     }
 
@@ -41,21 +41,21 @@ const ActualizarContrasena = () => {
         newPass: newPassword,
       });
 
-      mostraAlertaOK("Contraseña actualizada correctamente.", "success");
+      mostrarAlertaOK("Contraseña actualizada correctamente.", "success");
       console.log("Password updated:", response.data);
       navigate("/login");
     } catch (error) {
       if (error.response) {
         setError(error.response.data.message || "Error al actualizar la contraseña.");
-        mostraAlertaError("Error al actualizar la contraseña. Por favor, inténtelo de nuevo.", "error");
+        mostrarAlertaError("Error al actualizar la contraseña. Por favor, inténtelo de nuevo.", "error");
         console.error("Password update failed:", error.response.data);
       } else if (error.request) {
         setError("No se recibió respuesta del servidor.");
-        mostraAlertaError("No se recibió respuesta del servidor. Por favor, inténtelo de nuevo.", "error");
+        mostrarAlertaError("No se recibió respuesta del servidor. Por favor, inténtelo de nuevo.", "error");
         console.error("No response received:", error.request);
       } else {
         setError("Error al enviar la solicitud.");
-        mostraAlertaError("Error al enviar la solicitud. Por favor, inténtelo de nuevo.", "error");
+        mostrarAlertaError("Error al enviar la solicitud. Por favor, inténtelo de nuevo.", "error");
         console.error("Error in request setup:", error.message);
       }
     }

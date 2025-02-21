@@ -10,6 +10,7 @@ import Login from '../Login/Login';
 import RegistrarUsuario from '../Login/RegistrarUsuario/RegistrarUsuario';
 import AcualizarContrasena from '../Login/ActualizarContrasena/ActualizarContrasena';
 import { AutenticacionRoute } from "./AutenticacionRoute";
+import Home from '../Login/Menu/Home';
 
 //Equipos
 import HomeEquipos from '../Plantilla/PlantillaEquipos/Content';
@@ -27,17 +28,21 @@ export const routes = createBrowserRouter(
     <Route path="/" element={<Login />} />
     <Route path="ActualizarContrasena" element={<AcualizarContrasena />} />
     <Route path="/registro-usuario" element={<RegistrarUsuario />} />
+    
+
+    {/* Protected Routes */}
+    <Route path="/Home" element={<Home/>} />
 
     {/* Protected Routes */}
     <Route element={<AutenticacionRoute />}>
-        <Route path="/dashboard-equipos" element={<EquipmentsLayout />}>
+        <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>
           <Route index element={<HomeEquipos />} />
         </Route>
       </Route>
 
       {/* Protected Routes */}
     <Route element={<AutenticacionRoute />}>
-        <Route path="/dashboard-mantenimientos" element={<MaintenancesLayout />}>
+        <Route path="/dashboard-maintenances" element={<MaintenancesLayout />}>
           <Route index element={<HomeMantenimientos />} />
         </Route>
       </Route>
