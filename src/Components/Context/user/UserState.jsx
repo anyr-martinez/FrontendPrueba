@@ -3,7 +3,7 @@ import {UserContext}  from '../../Context/user/UserContext';
 import {useSessionStorage} from '../../Context/storage/useSessionStorage'; 
 
 const UserState = (props) => {
-    const [user, setUser] = useSessionStorage("usuario", null);
+    const [usuario, setUser] = useSessionStorage("usuario", null);
     const [token, setToken] = useSessionStorage("token_almacenado", null);
 
     const setCerrarSesion = () => {
@@ -15,7 +15,7 @@ const UserState = (props) => {
 
     const setLogin = async (data) => {
         try {
-            setUser(data.user);
+            setUser(data.usuario);
             setToken(data.token);
         } catch (error) {
             console.log(error);
@@ -24,7 +24,7 @@ const UserState = (props) => {
 
     return (
         <UserContext.Provider value={{
-            usuario: user,
+            usuario: usuario,
             token: token,
             setLogin,
             setCerrarSesion,

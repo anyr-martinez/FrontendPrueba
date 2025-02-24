@@ -1,12 +1,21 @@
-import React, { useContext } from "react";
-import { UserContext } from "../../Context/user/UserContext"; // Importa el contexto directamente
+import React, { useEffect } from "react";
+import { useContextUsuario } from "../../Context/user/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const { usuario } = useContext(UserContext);
-  console.log("Usuario desde Header:", usuario); // Asegúrate de que aquí se imprime el usuario correctamente
+  const { usuario, setCerrarSesion } = useContextUsuario();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("Usuario desde Header:", usuario); // Verifica si cambia aquí
+  }, [usuario]); // Esto hará que el efecto se ejecute cada vez que 'usuario' cambie
+
+  const handleLogout = () => {
+    setCerrarSesion();
+    navigate("/");
+  };
 
   return (
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -33,7 +42,7 @@ const Header = () => {
 
         {usuario && (
           <li className="nav-item">
-            <Link className="nav-link" to="#" onClick={''}>
+            <Link className="nav-link" to="#" onClick={handleLogout}>
               Cerrar sesión
             </Link>
           </li>

@@ -15,24 +15,41 @@ export default function Aside() {
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column justify-between" style={{ backgroundColor: "#145a32" }}>
       {/* Logo de Cooperativa Taulabé */}
-      <div
-        className="brand-link d-flex align-items-center justify-content-center"
+            <div
+        className="brand-link d-flex flex-column align-items-center justify-content-center"
         style={{
           backgroundColor: "#f39c12",
           color: "#007236",
           fontWeight: "bold",
-          padding: "15px",
+          padding: "20px",
           borderBottom: "2px solid #007236",
           textAlign: "center",
           fontSize: "1.2rem",
           borderRadius: "0 0 10px 10px",
         }}
       >
-        {/* Logo */}
-        <img src={logo2} className="img-circle elevation-2" alt="Logo" style={{ width: '30px', height: '30px', marginRight: '10px' }} />
-          
-        <p style={{ margin: 0 }}>Cooperativa Taulabé</p>
-      </div>
+      {/* Logo grande */}
+      <img
+        src={logo2}
+        className="img-circle elevation-3"
+        alt="Logo"
+        style={{
+          width: "100px",
+          height: "100px",
+          marginBottom: "10px",
+          border: "3px solid #007236",
+          padding: "5px",
+          backgroundColor: "#fff",
+          borderRadius: "50%",
+        }}
+      />
+
+      {/* Nombre de la cooperativa debajo del logo */}
+      <p style={{ margin: 0, fontSize: "1.5rem", fontWeight: "bold" }}>
+        Cooperativa Taulabé
+      </p>
+    </div>
+
 
       {/* Sidebar */}
       <div className="sidebar flex-grow-1">

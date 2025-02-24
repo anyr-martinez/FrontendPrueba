@@ -19,7 +19,7 @@ const Login = () => {
   const [contrasena, setPassword] = useState("");
   const navigate = useNavigate();
   const { setLogin } = useContext(UserContext);
-  const [, setStoredUser] = useSessionStorage("user", "");
+  const [, setStoredUser] = useSessionStorage("user", null );
   const { checkSpecialLogin } = useSpecialLogin();
 
   useEffect(() => {
@@ -59,7 +59,10 @@ const Login = () => {
         });
   
         // Guardar en sessionStorage
-        setStoredUser(usuario);
+        setStoredUser( usuario, token );
+        console.log("Token guardado:", token);
+
+      
   
         // Redirigir al menú principal (dashboard)
         navigate("/Home", { state: { userId: usuario.id } });

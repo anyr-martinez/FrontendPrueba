@@ -103,6 +103,7 @@ const RegistroUsuario = () => {
     } finally {
       setLoading(false);
     }
+    
   };
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
