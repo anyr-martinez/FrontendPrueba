@@ -14,41 +14,29 @@ import { AutenticacionRoute } from "./AutenticacionRoute";
 import Home from '../Login/Menu/Home';
 
 //Equipos
-import HomeEquipos from '../Plantilla/PlantillaEquipos/Content';
+import HomeEquipos from '../Plantilla/PlantillaEquipos/Home';
 
 //Mantenimientos 
-import HomeMantenimientos from '../Plantilla/PlantillaMantenimientos/Content';
+//import HomeMantenimientos from '../Plantilla/PlantillaMantenimientos/Content';
 // Importa Layout
 import { EquipmentsLayout } from '../Routes/EquimentsLayout';
-import { MaintenancesLayout } from '../Routes/MaintenancesLayout';
+//import { MaintenancesLayout } from '../Routes/MaintenancesLayout';
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
-    <Route>
-    {/* Public Routes */}
-    <Route path="/" element={<Login />} />
-    <Route path="ActualizarContrasena" element={<AcualizarContrasena />} />
-    <Route path="/registro-usuario" element={<RegistrarUsuario />} />
-    
-
-    {/* Protected Routes */}
-    <Route path="/Home" element={<Home/>} />
-
-    {/* Protected Routes */}
-    <Route element={<AutenticacionRoute />}>
+   <Route>
+      <Route path="/" element={<Login />} />
+      <Route path="/Home" element={<Home />} />
+      <Route path="/registro-usuario" element={<RegistrarUsuario />} />
+      <Route path="/actualizar-contrasena" element={<AcualizarContrasena />} />
+     
+     {/* Protected Routes */}
+     <Route element={<AutenticacionRoute />}>
         <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>
           <Route index element={<HomeEquipos />} />
+      
         </Route>
       </Route>
-
-      {/* Protected Routes */}
-    <Route element={<AutenticacionRoute />}>
-        <Route path="/dashboard-maintenances" element={<MaintenancesLayout />}>
-          <Route index element={<HomeMantenimientos />} />
-        </Route>
-      </Route>
-
-  
-  </Route>
+   </Route>
   )
 );

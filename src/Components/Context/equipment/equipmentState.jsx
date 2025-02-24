@@ -1,87 +1,51 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { AxiosPrivado } from "../../Axios/Axios"; 
-import { useContextUsuario } from "../user/UserContext"; 
-import { ListarEquipos, CrearEquipo, ObtenerEquipoPorId, ActualizarEquipo, EliminarEquipo, ObtenerEquipoById } from "../../Configuration/ApiUrls";
+import React, { useEffect, useState } from "react";
+import { EquipmentContext } from "./equipmentContext";
+import { AxiosPrivado } from "../../Axios/Axios";
+import { ListarEquipos } from "../../Configuracion/ApiUrls";
+import { useContextUsuario } from "../usuario/UsuarioContext";
 
-export const equipmentContext = createContext();
+export const EquipmentState = (props) => {
+    const { token } = useContextUsuario();
+    const [equipo, setEquipo] = useState(null);
+    const [listaEquipos, setListaEquipos] = useState([]);
+    const [actualizar, setActualizar] = useState(false);
 
-export const useContextEquipment = () => {
-  return useContext(equipmentContext);
-};
+    useEffect(() => {
+        ListaEquipos();
+    }, []);
 
-export const EquipoState = (props) => {
-  const { token } = useContextUsuario();  // Obtener el token desde el contexto del usuario
-  const [equipos, setEquipos] = useState([]);
-  const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
-  const [actualizar, setActualizar] = useState(false);
+    const ListaEquipos = async () => {
+        try {
+            ActualizarLista(ListarEquipos, setListaEquipos);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-  useEffect(() => {
-    ListarEquipos();
-  }, []);
+    const ActualizarLista = async (url, setDatos) => {
+        AxiosPrivado.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        try {
+            await AxiosPrivado.get(url)
+                .then((respuesta) => {
+                    setDatos(respuesta.data); // Asumiendo que la respuesta tiene una propiedad 'data'
+                });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-  const ListarEquipos = async () => {
-    try {
-      AxiosPrivado.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const respuesta = await AxiosPrivado.get(ListarEquipos);
-      setEquipos(respuesta.data);
-    } catch (error) {
-      console.log("Error al obtener los equipos:", error);
-    }
-  };
-
-  const ObtenerEquipoById = async (id) => {
-    try {
-      AxiosPrivado.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const respuesta = await AxiosPrivado.get(`${ObtenerEquipoById}/${id}`);
-      setEquipoSeleccionado(respuesta.data);
-    } catch (error) {
-      console.log("Error al obtener el equipo:", error);
-    }
-  };
-
-  const CrearEquipo = async (equipo) => {
-    try {
-      AxiosPrivado.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const respuesta = await AxiosPrivado.post(CrearEquipo, equipo);
-      setEquipos([...equipos, respuesta.data]); // Añadir el nuevo equipo a la lista
-    } catch (error) {
-      console.log("Error al crear el equipo:", error);
-    }
-  };
-
-  const ActualizarEquipo = async (equipo) => {
-    try {
-      AxiosPrivado.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const respuesta = await AxiosPrivado.put(`${ActualizarEquipo}/${equipo.id}`, equipo);
-      const nuevosEquipos = equipos.map((eq) => (eq.id === equipo.id ? respuesta.data : eq));
-      setEquipos(nuevosEquipos);
-    } catch (error) {
-      console.log("Error al actualizar el equipo:", error);
-    }
-  };
-
-  const EliminarEquipo = async (id) => {
-    try {
-      AxiosPrivado.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      await AxiosPrivado.delete(`${EliminarEquipo}/${id}`);
-      const equiposFiltrados = equipos.filter((eq) => eq.id !== id);
-      setEquipos(equiposFiltrados);
-    } catch (error) {
-      console.log("Error al eliminar el equipo:", error);
-    }
-  };
-
-  return (
-    <equipmentContext.Provider value={{
-      CrearEquipo,
-      ListarEquipos,
-      ObtenerEquipoById,
-      ActualizarEquipo,
-      EliminarEquipo,
-      setActualizar
-    
-    }}>
-      {props.children}
-    </equipmentContext.Provider>
-  );
+    return (
+        <EquipmentContext.Provider value={{
+            equipo,
+            listaEquipos,
+            actualizar,
+            setActualizar,
+            setEquipo,
+            setListaEquipos,
+            ListaEquipos,
+            ActualizarLista
+        }}>
+            {props.children}
+        </EquipmentContext.Provider>
+    );
 };

@@ -10,11 +10,18 @@ const Header = () => {
 
   useEffect(() => {
     console.log("Usuario desde Header:", usuario); // Verifica si cambia aquí
-  }, [usuario]); // Esto hará que el efecto se ejecute cada vez que 'usuario' cambie
+  }, [usuario]);
 
   const handleLogout = () => {
-    setCerrarSesion();
-    navigate("/");
+    setCerrarSesion(); // Cierra la sesión y borra el contexto
+    navigate("/"); // Redirige al login
+  };
+
+  const renderUsername = () => {
+    if (usuario && usuario.login) {
+      return `Bienvenido, ${usuario.usuario}`; // Accediendo al usuario directamente
+    }
+    return "Invitado";
   };
 
   return (
@@ -36,11 +43,11 @@ const Header = () => {
         <li className="nav-item">
           <a className="nav-link" href="#">
             <FontAwesomeIcon icon={faUser} className="mr-2" />
-            {usuario ? `Bienvenido, ${usuario.login}` : "Invitado"}
+            {renderUsername()}
           </a>
         </li>
 
-        {usuario && (
+        {usuario && usuario.login && (
           <li className="nav-item">
             <Link className="nav-link" to="#" onClick={handleLogout}>
               Cerrar sesión

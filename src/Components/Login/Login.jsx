@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import fondo from "../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,12 +19,8 @@ const Login = () => {
   const [contrasena, setPassword] = useState("");
   const navigate = useNavigate();
   const { setLogin } = useContext(UserContext);
-  const [, setStoredUser] = useSessionStorage("user", null );
+  const [,setStoredUser] = useSessionStorage("user" , usuario);
   const { checkSpecialLogin } = useSpecialLogin();
-
-  useEffect(() => {
-    setLogin({ usuario: null, token: null });
-  }, [setLogin]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,7 +39,7 @@ const Login = () => {
         usuario: usuario,
         contrasena: contrasena,
       });
-      console.log(response);
+      //console.log(response);
   
       if (response?.data && response.data.usuario) {
         const { token, usuario } = response.data;
@@ -52,6 +48,7 @@ const Login = () => {
         setLogin({
           usuario: {
             usuario: usuario.usuario,
+            nombre: usuario.nombre,
             login: usuario.login,
             id: usuario.id,
           },
@@ -59,7 +56,7 @@ const Login = () => {
         });
   
         // Guardar en sessionStorage
-        setStoredUser( usuario, token );
+        setStoredUser( {usuario, token} );
         console.log("Token guardado:", token);
 
       

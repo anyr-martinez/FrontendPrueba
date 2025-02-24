@@ -3,11 +3,11 @@ import { useContextUsuario } from "../Context/user/UserContext";
 import { mostrarAlertaError } from "../SweetAlert/SweetAlert";
 
 export const AutenticacionRoute = ({ children})=>{
-    const {token} = useContextUsuario();
-    if (!token){
+    const {token, usuario} = useContextUsuario();
+    if (!token || !usuario){
         console.log(token);
         mostrarAlertaError("Token Invalido");
-        return <Navigate to="/" />;
+        return <Navigate to="/login" />;
     }
-    return children ? children : <Outlet />;
+    return <Outlet></Outlet>
 };
