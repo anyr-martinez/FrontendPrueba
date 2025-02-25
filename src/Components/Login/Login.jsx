@@ -41,19 +41,19 @@ const Login = () => {
       });
       //console.log(response);
   
-      if (response?.data && response.data.usuario) {
-        const { token, usuario } = response.data;
+      if (response?.data.data && response.data.data.token) {
+        const { token, usuario, nombre, id } = response.data.data;
   
         // Guardar sesión
         setLogin({
           usuario: {
-            usuario: usuario.usuario,
-            nombre: usuario.nombre,
-            login: usuario.login,
-            id: usuario.id,
+            usuario: usuario,
+            nombre: nombre,
+            id: id,
           },
           token: token,
         });
+        console.log("Usuario guradado en el contexto:", usuario);
   
         // Guardar en sessionStorage
         setStoredUser( {usuario, token} );

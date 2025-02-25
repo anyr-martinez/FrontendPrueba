@@ -37,7 +37,7 @@ export default function Aside() {
           width: "100px",
           height: "100px",
           marginBottom: "10px",
-          border: "3px solid #007236",
+          border: "3px solid #C",
           padding: "5px",
           backgroundColor: "#fff",
           borderRadius: "50%",
@@ -62,7 +62,7 @@ export default function Aside() {
             {/* Enlace a Equipos */}
             <li className="nav-item">
               <Link
-                to="/equipos"
+                to="/dashboard-equipments"
                 className={`nav-link ${location.pathname === "/dashboard-equipments" ? "active" : ""}`}
               >
                 <i className="nav-icon fas fa-desktop"></i>

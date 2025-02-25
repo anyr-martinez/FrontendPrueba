@@ -1,91 +1,104 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { AxiosPublico } from "../../Axios/Axios";
-import { useSessionStorage } from "../../Context/storage/useSessionStorage";
-import { ListarEquipos } from "../../Configuration/ApiUrls"; // Asegúrate de que la ruta sea correcta
 
-const Home = () => {
-  const [loading, setLoading] = useState(true);
-  const [equipos, setEquipos] = useState([]);
-  const [error, setError] = useState(null);
-  const [storedEmail] = useSessionStorage("userEmail", ""); // Si es necesario, cambia la clave "userEmail"
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await AxiosPublico.get(ListarEquipos); // Asegúrate de que la ruta sea correcta
-        const data = response.data.datos; // O ajusta esto según cómo llega la respuesta
-
-        const userEquipos = data.filter(
-          (equipo) => equipo.responsable_email === storedEmail
-        );
-
-        setEquipos(userEquipos);
-      } catch (error) {
-        setError("Error al cargar los datos de los equipos. Por favor, intente más tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [storedEmail]);
-
+export default function EquiposDashboard() {
   return (
     <div className="content-wrapper">
+      {/* Encabezado */}
+      <div className="content-header d-flex justify-content-center align-items-center">
+        <div className="container-fluid text-center">
+          <h1 className="m-0 text-dark fw-bold" style={{ fontSize: "2.5rem", color: "#00A32B" }}>
+            Gestión de Equipos de TI
+          </h1>
+        </div>
+      </div>
+
+      {/* Contenido */}
       <section className="content py-4">
-        <div className="container-fluid px-3 px-md-4">
-          <div className="row mb-4">
-            <div className="col-12">
-              <h2 className="h2 fw-bold mb-4">Equipos Asignados</h2>
-            </div>
-          </div>
-
-          <div className="row gy-4">
-            {loading ? (
-              <div className="col-12 col-sm-6 col-lg-3">
-                <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Cargando...</span>
-                </div>
-              </div>
-            ) : (
-              equipos.map((equipo) => (
-                <div key={equipo.id} className="col-12 col-sm-6 col-lg-3 mb-4">
-                  <div className="card h-100 shadow-sm hover-card">
-                    <div className="card-header bg-success bg-opacity-10 py-2 px-3">
-                      <h5 className="text-truncate w-100 fs-1">{equipo.descripcion}</h5>
-                    </div>
-                    <div className="card-body d-flex flex-column">
-                      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3">
-                        <p className="card-text mb-2 mb-sm-0 text-truncate">
-                          <i className="fas fa-user-tie me-2"></i>
-                          <strong>Responsable:</strong> {equipo.responsable_nombre}
-                        </p>
-                      </div>
-                      <Link
-                        to={`/dashboard-equipos/equipos/${equipo.id}`}
-                        className="btn btn-info mt-auto"
-                      >
-                        <i className="fas fa-eye me-2"></i>
-                        Ver Detalles
-                      </Link>
-                    </div>
+        <div className="container-fluid">
+          <div className="row">
+            {/* Guardar Equipo */}
+            <div className="col-lg-4 col-md-6">
+              <Link to="/dashboard-equipments/crear-equipo" className="text-decoration-none">
+                <div className="small-box bg-success">
+                  <div className="inner">
+                    <h3>Agregar</h3>
+                    <p>Nuevo equipo</p>
                   </div>
+                  <div className="icon">
+                    <i className="fas fa-plus"></i>
+                  </div>
+                  <div className="small-box-footer">Más info <i className="fas fa-arrow-circle-right"></i></div>
                 </div>
-              ))
-            )}
-          </div>
-
-          {!loading && !error && equipos.length === 0 && (
-            <div className="alert alert-info d-flex align-items-center" role="alert">
-              <i className="fas fa-info-circle me-2"></i>
-              <div>No hay equipos asignados actualmente.</div>
+              </Link>
             </div>
-          )}
+
+            {/* Listar Equipos */}
+            <div className="col-lg-4 col-md-6">
+              <Link to="/dashboard-equipos/listar" className="text-decoration-none">
+                <div className="small-box bg-info">
+                  <div className="inner">
+                    <h3>Ver Equipos</h3>
+                    <p>Lista con filtros</p>
+                  </div>
+                  <div className="icon">
+                    <i className="fas fa-list"></i>
+                  </div>
+                  <div className="small-box-footer">Más info <i className="fas fa-arrow-circle-right"></i></div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Editar Equipos */}
+            <div className="col-lg-4 col-md-6">
+              <Link to="/dashboard-equipos/editar" className="text-decoration-none">
+                <div className="small-box bg-warning">
+                  <div className="inner">
+                    <h3>Editar</h3>
+                    <p>Modificar equipo</p>
+                  </div>
+                  <div className="icon">
+                    <i className="fas fa-edit"></i>
+                  </div>
+                  <div className="small-box-footer">Más info <i className="fas fa-arrow-circle-right"></i></div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Actualizar Equipos */}
+            <div className="col-lg-4 col-md-6">
+              <Link to="/dashboard-equipos/actualizar" className="text-decoration-none">
+                <div className="small-box bg-primary">
+                  <div className="inner">
+                    <h3>Actualizar</h3>
+                    <p>Información del equipo</p>
+                  </div>
+                  <div className="icon">
+                    <i className="fas fa-sync-alt"></i>
+                  </div>
+                  <div className="small-box-footer">Más info <i className="fas fa-arrow-circle-right"></i></div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Eliminar Equipos */}
+            <div className="col-lg-4 col-md-6">
+              <Link to="/dashboard-equipos/eliminar" className="text-decoration-none">
+                <div className="small-box bg-danger">
+                  <div className="inner">
+                    <h3>Eliminar</h3>
+                    <p>Inhabilitar equipo</p>
+                  </div>
+                  <div className="icon">
+                    <i className="fas fa-trash"></i>
+                  </div>
+                  <div className="small-box-footer">Más info <i className="fas fa-arrow-circle-right"></i></div>
+                </div>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
   );
-};
-
-export default Home;
+}

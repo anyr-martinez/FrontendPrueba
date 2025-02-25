@@ -1,14 +1,13 @@
 import React from 'react';
-import { useOutlet } from "react-router-dom";
-import { useContextUsuario } from "../Context/user/UserContext"; 
+import { EquipmentState } from '../Context/equipment/EquipmentState';
 import Equipments from '../Equipments/Equipments';
 
 export const EquipmentsLayout = () => {
-  const outlet = useOutlet();
-  const { usuario } = useContextUsuario(); 
+  
+  
   return (
-    <equipmentState>
+    <EquipmentState>
       <Equipments />
-    </equipmentState>
+    </EquipmentState>
   );
 };

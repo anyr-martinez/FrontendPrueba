@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Navigate,
   createBrowserRouter,
   createRoutesFromElements,
   Route,
@@ -15,6 +14,8 @@ import Home from '../Login/Menu/Home';
 
 //Equipos
 import HomeEquipos from '../Plantilla/PlantillaEquipos/Home';
+import GuardarEquipo from "../Plantilla/PlantillaEquipos/CrearEquipo/crearEquipo";
+
 
 //Mantenimientos 
 //import HomeMantenimientos from '../Plantilla/PlantillaMantenimientos/Content';
@@ -32,8 +33,10 @@ export const routes = createBrowserRouter(
      
      {/* Protected Routes */}
      <Route element={<AutenticacionRoute />}>
-        <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>
+        <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>       
           <Route index element={<HomeEquipos />} />
+          <Route path="crear-equipo" element={<GuardarEquipo />} />
+        
       
         </Route>
       </Route>

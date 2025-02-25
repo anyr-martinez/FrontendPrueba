@@ -10,7 +10,7 @@ export const ActualizarUsuario = '/api/users/updateUser/{id}';
 export const CrearUsuario = '/api/users/register';
 
 // Equipos endpoints
-export const CrearEquipo = '/api/equipment/create';
+export const GuardarEquipo = '/api/equipment/create';
 export const ListarEquipos = '/api/equipment/equipments';
 export const ObtenerEquipoById = '/api/equipment/equipments/{id}';
 export const ActualizarEquipo = '/api/equipment/updateEquipment/{id}';

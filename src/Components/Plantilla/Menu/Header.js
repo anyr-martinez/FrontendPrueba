@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useContextUsuario } from "../../Context/user/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -8,9 +8,6 @@ const Header = () => {
   const { usuario, setCerrarSesion } = useContextUsuario();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("Usuario desde Header:", usuario); // Verifica si cambia aquí
-  }, [usuario]);
 
   const handleLogout = () => {
     setCerrarSesion(); // Cierra la sesión y borra el contexto
@@ -18,22 +15,23 @@ const Header = () => {
   };
 
   const renderUsername = () => {
-    if (usuario && usuario.login) {
-      return `Bienvenido, ${usuario.usuario}`; // Accediendo al usuario directamente
+    if (usuario && usuario.usuario) {
+      return <span style={{ color: "#145a32", fontWeight: "600" }}>Bienvenido, {usuario.nombre}</span>;
     }
-    return "Invitado";
+    return <span style={{ color: "#888888" }}>Invitado</span>;
   };
+  
 
   return (
     <nav className="main-header navbar navbar-expand navbar-white navbar-light">
       <ul className="navbar-nav">
         <li className="nav-item">
           <a className="nav-link" data-widget="pushmenu" href="#" role="button">
-            <i className="fas fa-bars"></i>
+            <i className="fas fa-bars" style={{color: "#145a32"}} ></i>
           </a>
         </li>
         <li className="nav-item d-none d-sm-inline-block">
-          <a href="/" className="nav-link">
+          <a href="/" className="nav-link" style={{color: "#145a32", fontWeight: "700"}}>
             Inicio
           </a>
         </li>
@@ -42,7 +40,7 @@ const Header = () => {
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
           <a className="nav-link" href="#">
-            <FontAwesomeIcon icon={faUser} className="mr-2" />
+            <FontAwesomeIcon icon={faUser} style={{ color:  "#f39c12"}} className="mr-2" />
             {renderUsername()}
           </a>
         </li>
