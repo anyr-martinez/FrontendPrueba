@@ -52,7 +52,7 @@ export default function Content() {
 
             {/* Opción Mantenimientos */}
             <div className="col-12 col-sm-6 col-lg-4">
-              <Link to="/mantenimientos" className="text-decoration-none">
+              <Link to="/dashboard-maintenances" className="text-decoration-none">
                 <div
                   className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg"
                   style={{ backgroundColor: "#f39c12" }} 
