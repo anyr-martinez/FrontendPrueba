@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import { AxiosPrivado } from "../../Axios/Axios";  // Usar AxiosPrivado
+import { AxiosPrivado } from "../../Axios/Axios"; 
 import { ListarEquipos, GuardarEquipo, ActualizarEquipo, EliminarEquipo } from "../../Configuration/ApiUrls";
+import { useSessionStorage } from "../../Context/storage/useSessionStorage";  
 
 export default function HomeEquipo() {
-  
-
   const [equipos, setEquipos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modo, setModo] = useState("Agregar");
@@ -16,70 +15,83 @@ export default function HomeEquipo() {
     numero_serie: "",
     fecha_entrada: "",
   });
+  
+  const [user, setUser] = useSessionStorage("user", {});  // Obtener el usuario desde sessionStorage
 
   useEffect(() => {
-    obtenerEquipos(); // Llamada para obtener equipos
+    obtenerEquipos(); // Llamada para obtener equipos cuando se monta el componente
   }, []);
 
   const obtenerEquipos = async () => {
     try {
-      console.log("Intentando obtener equipos...");
-      const respuesta = await AxiosPrivado.get(ListarEquipos);
-      
-      console.log("Respuesta completa de la API:", respuesta);
+      const storedUser = sessionStorage.getItem("user");
+      const user = storedUser ? JSON.parse(storedUser) : null;
   
-      if (typeof respuesta.data !== "object") {
-        console.error("La API no devolvió un JSON válido:", respuesta.data);
+      if (!user || !user.token) {
+        console.log("No token disponible, redirigiendo al login...");
+        window.location.href = "/"; // Redirigir al login si no hay token
         return;
       }
   
-      setEquipos(respuesta.data);
+      console.log("Token encontrado. Intentando obtener equipos...");
+      const respuesta = await AxiosPrivado.get(ListarEquipos, {
+        headers: {
+          Authorization: `Bearer ${user.token}`  // Asegúrate de pasar el token correctamente
+        }
+      });
+      console.log("Respuesta completa de la API:", respuesta);
+      setEquipos(respuesta.data); // Establece la lista de equipos
     } catch (error) {
-      console.error("Error al obtener los equipos:", error);
+      console.error("Error al obtener los equipos:", error.response ? error.response.data : error);
   
-      if (error.response) {
-        console.log("Código de estado:", error.response.status);
-        console.log("Respuesta del servidor:", error.response.data);
+      if (error.response && error.response.status === 401) {
+        console.log("Token inválido o expirado. Redirigiendo al login...");
+        sessionStorage.removeItem("user"); // Eliminar el token si es inválido
+        window.location.href = "/"; // Redirigir al login
       }
     }
   };
   
   const handleShow = (modo, equipo = { id: "", descripcion: "", tipo: "", numero_serie: "", fecha_entrada: "" }) => {
-    setModo(modo);
-    setEquipoSeleccionado(equipo);
-    setShowModal(true);
+    setModo(modo); // Establece el modo (Agregar, Editar, Eliminar)
+    setEquipoSeleccionado(equipo); // Establece el equipo seleccionado
+    setShowModal(true); // Muestra el modal
   };
 
   const handleSave = async () => {
     try {
-      // Verificar si el token está presente antes de realizar las solicitudes
-      const storedUser = JSON.parse(sessionStorage.getItem("user"));
-      if (!storedUser || !storedUser.token) {
+      // Verifica si el token está presente antes de realizar las solicitudes
+      if (!user || !user.token) {
         console.log("No token disponible, redirigiendo al login");
-        window.location.href = "/home";  // Redirigir al login si no hay token
+        window.location.href = "/"; // Redirigir al login si no hay token
         return;
       }
 
       let response;
 
+      // Dependiendo del modo, se realiza la acción correspondiente
       if (modo === "Agregar") {
-        response = await AxiosPrivado.post(GuardarEquipo, equipoSeleccionado);  
+        response = await AxiosPrivado.post(GuardarEquipo, equipoSeleccionado);
       } else if (modo === "Editar") {
-        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id}`, equipoSeleccionado);  
+        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id}`, equipoSeleccionado);
       } else if (modo === "Eliminar") {
-        response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id}`);  
+        response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id}`);
       }
 
       console.log("Respuesta del servidor:", response.data);
-      setEquipos([...equipos, response.data]);  // Actualizar lista de equipos
-      setShowModal(false);  // Cerrar modal
+      if (modo === "Agregar") {
+        setEquipos([...equipos, response.data]); // Actualiza la lista de equipos con el nuevo
+      } else {
+        setEquipos(equipos.map(equipo => equipo.id === equipoSeleccionado.id ? equipoSeleccionado : equipo)); // Actualiza el equipo editado
+      }
+      setShowModal(false); // Cierra el modal
     } catch (error) {
       console.error("Error al guardar el equipo:", error);
       // Manejo de errores, si hay un error 401 redirigir al login
       if (error.response && error.response.status === 401) {
         console.log("Token inválido o expirado. Redirigiendo al login...");
-        sessionStorage.removeItem("user");  // Eliminar el token si es inválido
-        window.location.href = "/login";  // Redirigir a la página de login
+        sessionStorage.removeItem("user"); // Eliminar el token si es inválido
+        window.location.href = "/login"; // Redirigir al login
       }
     }
   };

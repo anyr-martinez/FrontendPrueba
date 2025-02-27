@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DesEncriptar, Encriptar } from "../../Encrypt/Crypto";
+import { DesEncriptar, Encriptar } from "../../Encrypt/Crypto";  // Asegúrate de que estas funciones estén importadas correctamente
 
 export const useSessionStorage = (keyName, defaultValue) => {
   const [storedValue, setStoredValue] = useState(() => {
@@ -13,14 +13,14 @@ export const useSessionStorage = (keyName, defaultValue) => {
 
         // Verificamos si los datos desencriptados son válidos
         if (decryptedValue) {
-          return JSON.parse(decryptedValue);
+          return decryptedValue;  // Ya no hacemos JSON.parse aquí, DesEncriptar devuelve un objeto
         } else {
           console.error("No se pudo desencriptar el valor de sessionStorage.");
           return defaultValue;
         }
       } else {
         // Si no hay valor, lo encriptamos y lo guardamos
-        const encryptedDefaultValue = Encriptar(JSON.stringify(defaultValue));
+        const encryptedDefaultValue = Encriptar(JSON.stringify(defaultValue));  // Encriptamos el valor
         window.sessionStorage.setItem(keyName, encryptedDefaultValue);
         return defaultValue;
       }

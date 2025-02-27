@@ -34,9 +34,9 @@ export const routes = createBrowserRouter(
      
      {/* Protected Routes */}
      <Route element={<AutenticacionRoute />}>
-        <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>
-        <Route path="home" element={<HomeEquipo />} />       
+        <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>      
           <Route index element={<HomeEquipos />} />
+          <Route path="home" element={<HomeEquipo />} /> 
         
         
       
