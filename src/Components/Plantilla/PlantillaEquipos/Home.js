@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
-import { AxiosPrivado } from "../../Axios/Axios"; 
+import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { ListarEquipos, GuardarEquipo, ActualizarEquipo, EliminarEquipo } from "../../Configuration/ApiUrls";
-import { useSessionStorage } from "../../Context/storage/useSessionStorage";  
+import { useSessionStorage } from "../../Context/storage/useSessionStorage";
+import { mostrarAlertaError, mostrarAlertaOK } from "../../SweetAlert/SweetAlert";
 
 export default function HomeEquipo() {
+  const [user] = useSessionStorage("user", {});
   const [equipos, setEquipos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modo, setModo] = useState("Agregar");
@@ -13,57 +15,42 @@ export default function HomeEquipo() {
     descripcion: "",
     tipo: "",
     numero_serie: "",
-    fecha_entrada: "",
+    fecha_registro: "",
   });
-  
-  const [user, setUser] = useSessionStorage("user", {});  // Obtener el usuario desde sessionStorage
+  const [filtros, setFiltros] = useState({
+    id: "",
+    descripcion: "",
+    tipo: "",
+    fecha_registro: "",
+  });
 
   useEffect(() => {
-    obtenerEquipos(); // Llamada para obtener equipos cuando se monta el componente
+    obtenerEquipos();
   }, []);
 
+  // Obtener los equipos al cargar el componente
   const obtenerEquipos = async () => {
     try {
-      const storedUser = sessionStorage.getItem("user");
-      const user = storedUser ? JSON.parse(storedUser) : null;
-  
-      if (!user || !user.token) {
-        console.log("No token disponible, redirigiendo al login...");
-        window.location.href = "/"; // Redirigir al login si no hay token
-        return;
-      }
-  
-      console.log("Token encontrado. Intentando obtener equipos...");
-      const respuesta = await AxiosPrivado.get(ListarEquipos, {
-        headers: {
-          Authorization: `Bearer ${user.token}`  // Asegúrate de pasar el token correctamente
-        }
-      });
-      console.log("Respuesta completa de la API:", respuesta);
-      setEquipos(respuesta.data); // Establece la lista de equipos
+      const respuesta = await AxiosPublico.get(ListarEquipos);
+      setEquipos(respuesta.data.data); // Establece la lista de equipos
     } catch (error) {
-      console.error("Error al obtener los equipos:", error.response ? error.response.data : error);
-  
-      if (error.response && error.response.status === 401) {
-        console.log("Token inválido o expirado. Redirigiendo al login...");
-        sessionStorage.removeItem("user"); // Eliminar el token si es inválido
-        window.location.href = "/"; // Redirigir al login
-      }
+      console.error("Error al obtener los equipos:", error.response ? error.response.data.data : error);
     }
   };
-  
-  const handleShow = (modo, equipo = { id: "", descripcion: "", tipo: "", numero_serie: "", fecha_entrada: "" }) => {
+
+  // Mostrar el modal con el modo adecuado (Agregar, Editar, Eliminar)
+  const handleShow = (modo, equipo = { id: "", descripcion: "", tipo: "", numero_serie: "", fecha_registro: "" }) => {
     setModo(modo); // Establece el modo (Agregar, Editar, Eliminar)
     setEquipoSeleccionado(equipo); // Establece el equipo seleccionado
     setShowModal(true); // Muestra el modal
   };
 
+  // Guardar, Editar o Eliminar un equipo
   const handleSave = async () => {
     try {
-      // Verifica si el token está presente antes de realizar las solicitudes
       if (!user || !user.token) {
         console.log("No token disponible, redirigiendo al login");
-        window.location.href = "/"; // Redirigir al login si no hay token
+        window.location.href = "/home"; // Redirigir al home si no hay token
         return;
       }
 
@@ -71,30 +58,67 @@ export default function HomeEquipo() {
 
       // Dependiendo del modo, se realiza la acción correspondiente
       if (modo === "Agregar") {
-        response = await AxiosPrivado.post(GuardarEquipo, equipoSeleccionado);
+        response = await AxiosPrivado.post(GuardarEquipo, equipoSeleccionado, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        setEquipos((prevEquipos) => [...prevEquipos, response.data]); 
+        obtenerEquipos(); // Actualiza la lista con el nuevo equipo
+        mostrarAlertaOK("Equipo Creado Exitosamente!");
       } else if (modo === "Editar") {
-        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id}`, equipoSeleccionado);
+        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id}`, equipoSeleccionado, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        setEquipos((prevEquipos) =>
+          prevEquipos.map((equipo) =>
+            equipo.id === equipoSeleccionado.id ? response.data : equipo
+          )
+        );
+        mostrarAlertaOK("Equipo Actualizado Exitosamente!");
       } else if (modo === "Eliminar") {
-        response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id}`);
+        response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id}`, {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        setEquipos((prevEquipos) =>
+          prevEquipos.filter((equipo) => equipo.id !== equipoSeleccionado.id)
+        );
+        mostrarAlertaOK("Equipo Eliminado Exitosamente!");
       }
 
-      console.log("Respuesta del servidor:", response.data);
-      if (modo === "Agregar") {
-        setEquipos([...equipos, response.data]); // Actualiza la lista de equipos con el nuevo
-      } else {
-        setEquipos(equipos.map(equipo => equipo.id === equipoSeleccionado.id ? equipoSeleccionado : equipo)); // Actualiza el equipo editado
-      }
       setShowModal(false); // Cierra el modal
     } catch (error) {
       console.error("Error al guardar el equipo:", error);
-      // Manejo de errores, si hay un error 401 redirigir al login
+      mostrarAlertaError("Error al crear un equipo nuevo");
       if (error.response && error.response.status === 401) {
-        console.log("Token inválido o expirado. Redirigiendo al login...");
         sessionStorage.removeItem("user"); // Eliminar el token si es inválido
-        window.location.href = "/login"; // Redirigir al login
+        window.location.href = "/"; // Redirigir al login
       }
     }
   };
+
+  // Manejar cambios en los filtros
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFiltros((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  // Filtrar los equipos según los filtros establecidos
+  const filteredEquipos = equipos.filter((equipo) => {
+    return (
+      (filtros.id === "" || equipo.id_equipo.toString().includes(filtros.id)) &&
+      (filtros.descripcion === "" || equipo.descripcion.toLowerCase().includes(filtros.descripcion.toLowerCase())) &&
+      (filtros.tipo === "" || equipo.tipo.toLowerCase().includes(filtros.tipo.toLowerCase())) &&
+      (filtros.fecha_registro === "" || equipo.fecha_registro.includes(filtros.fecha_registro))
+    );
+  });
 
   return (
     <div className="content-wrapper">
@@ -110,6 +134,41 @@ export default function HomeEquipo() {
             Agregar Equipo
           </Button>
 
+          {/* Filtros */}
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="Filtrar por ID"
+              name="id"
+              value={filtros.id}
+              onChange={handleFilterChange}
+            />
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="Filtrar por Descripción"
+              name="descripcion"
+              value={filtros.descripcion}
+              onChange={handleFilterChange}
+            />
+            <input
+              type="text"
+              className="form-control mb-2"
+              placeholder="Filtrar por Tipo"
+              name="tipo"
+              value={filtros.tipo}
+              onChange={handleFilterChange}
+            />
+            <input
+              type="date"
+              className="form-control mb-2"
+              name="fecha_registro"
+              value={filtros.fecha_registro}
+              onChange={handleFilterChange}
+            />
+          </div>
+
           <div className="card">
             <div className="card-body">
               <table className="table table-bordered table-striped">
@@ -119,28 +178,31 @@ export default function HomeEquipo() {
                     <th>Descripción</th>
                     <th>Tipo</th>
                     <th>Número de Serie</th>
-                    <th>Fecha de Entrada</th>
+                    <th>Fecha de Registro</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {equipos.map((equipo) => (
-                    <tr key={equipo.id}>
-                      <td>{equipo.id}</td>
-                      <td>{equipo.descripcion}</td>
-                      <td>{equipo.tipo}</td>
-                      <td>{equipo.numero_serie}</td>
-                      <td>{equipo.fecha_entrada}</td>
-                      <td>
-                        <Button variant="warning" size="sm" onClick={() => handleShow("Editar", equipo)}>
-                          Editar
-                        </Button>{" "}
-                        <Button variant="danger" size="sm" onClick={() => handleShow("Eliminar", equipo)}>
-                          Eliminar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredEquipos
+                    .filter((equipo) => equipo.estado === 1) // Filtro para que solo muestre los equipos activos
+                    .map((equipo) => (
+                      <tr key={equipo.id_equipo}>
+                        <td>{equipo.id_equipo}</td>
+                        <td>{equipo.descripcion}</td>
+                        <td>{equipo.tipo}</td>
+                        <td>{equipo.numero_serie}</td>
+                        <td>{new Date(equipo.fecha_registro).toLocaleDateString()}</td>
+
+                        <td>
+                          <Button variant="warning" size="sm" onClick={() => handleShow("Editar", equipo)}>
+                            Editar
+                          </Button>{" "}
+                          <Button variant="danger" size="sm" onClick={() => handleShow("Eliminar", equipo)}>
+                            Eliminar
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -148,7 +210,7 @@ export default function HomeEquipo() {
         </div>
       </section>
 
-      {/* MODAL */}
+      {/* Modal para agregar, editar o eliminar un equipo */}
       <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>{modo} Equipo</Modal.Title>
@@ -184,8 +246,8 @@ export default function HomeEquipo() {
                 <Form.Label>Fecha de Entrada</Form.Label>
                 <Form.Control
                   type="date"
-                  value={equipoSeleccionado.fecha_entrada}
-                  onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, fecha_entrada: e.target.value })}
+                  value={equipoSeleccionado.fecha_registro}
+                  onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, fecha_registro: e.target.value })}
                 />
               </Form.Group>
             </Form>

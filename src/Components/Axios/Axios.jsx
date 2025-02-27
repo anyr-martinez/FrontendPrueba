@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Servidor } from "../Configuration/ApiUrls";
+import { DesEncriptar } from "../Encrypt/Crypto";
 
 
 // Axios público (sin autenticación)
@@ -19,16 +20,29 @@ export const AxiosPrivado = axios.create({
 // Interceptor para agregar el token automáticamente
 AxiosPrivado.interceptors.request.use(
   (config) => {
-    const storedUser = JSON.parse(sessionStorage.getItem("user")); // Obtener usuario desde sessionStorage
-    if (storedUser && storedUser.token) {
-      config.headers.Authorization = `Bearer ${storedUser.token}`; // Inyectar token
-      console.log("Token enviado en el header:", storedUser.token); // Verificación
+    try {
+      const encryptedUser = sessionStorage.getItem("user");
+
+      if (encryptedUser) {
+        const decryptedUser = DesEncriptar(encryptedUser); 
+        const user = JSON.parse(decryptedUser); 
+
+        if (user.token) {
+          config.headers.Authorization = `Bearer ${user.token}`;
+          console.log("Token enviado en el header:", user.token);
+        } else {
+          console.warn("No hay token disponible en el usuario.");
+        }
+      } else {
+        console.warn(" No hay usuario en sessionStorage.");
+      }
+    } catch (error) {
+      console.error("Error al obtener el usuario de sessionStorage:", error);
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Axios para imágenes

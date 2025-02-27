@@ -1,43 +1,47 @@
 import { useState } from "react";
-import { DesEncriptar, Encriptar } from "../../Encrypt/Crypto";  // Asegúrate de que estas funciones estén importadas correctamente
+import { DesEncriptar, Encriptar } from "../../Encrypt/Crypto"; 
 
 export const useSessionStorage = (keyName, defaultValue) => {
   const [storedValue, setStoredValue] = useState(() => {
     try {
-      // Verifica si hay datos en sessionStorage
-      const encryptedValue = window.sessionStorage.getItem(keyName);
+      const encryptedValue = window.sessionStorage.getItem(keyName);//Valor ya encriptado en sessionStorage
 
       if (encryptedValue) {
-        // Intentamos desencriptar el valor
         const decryptedValue = DesEncriptar(encryptedValue);
-
-        // Verificamos si los datos desencriptados son válidos
-        if (decryptedValue) {
-          return decryptedValue;  // Ya no hacemos JSON.parse aquí, DesEncriptar devuelve un objeto
+        
+        if (decryptedValue && typeof decryptedValue === "string") {
+          try {
+            const parsedValue = JSON.parse(decryptedValue);  //Valor desencriptado y parseado
+            return parsedValue;
+          } catch (error) {
+            console.error(`Error al parsear JSON desencriptado (${keyName}):`, error);
+            return defaultValue;
+          }
         } else {
-          console.error("No se pudo desencriptar el valor de sessionStorage.");
+          console.warn(`No se pudo desencriptar correctamente (${keyName}).`);
           return defaultValue;
         }
       } else {
-        // Si no hay valor, lo encriptamos y lo guardamos
-        const encryptedDefaultValue = Encriptar(JSON.stringify(defaultValue));  // Encriptamos el valor
+        // Guardamos el valor por defecto si no existe
+        const encryptedDefaultValue = Encriptar(JSON.stringify(defaultValue));
         window.sessionStorage.setItem(keyName, encryptedDefaultValue);
+        console.log(`Guardando valor por defecto en sessionStorage (${keyName}):`, defaultValue);
         return defaultValue;
       }
     } catch (err) {
-      console.error("Error al leer desde sessionStorage:", err);
+      console.error(`Error al leer desde sessionStorage (${keyName}):`, err);
       return defaultValue;
     }
   });
 
   const setValue = (newValue) => {
     try {
-      // Encriptamos el valor antes de guardarlo
       const encryptedValue = Encriptar(JSON.stringify(newValue));
-      window.sessionStorage.setItem(keyName, encryptedValue);
+      window.sessionStorage.setItem(keyName, encryptedValue); //Guarda un nuevo valor en sessionStorage
+      console.log(`Nuevo valor guardado en sessionStorage (${keyName}):`, newValue);
       setStoredValue(newValue);
     } catch (err) {
-      console.error("Error al escribir en sessionStorage:", err);
+      console.error(`Error al escribir en sessionStorage (${keyName}):`, err);
     }
   };
 

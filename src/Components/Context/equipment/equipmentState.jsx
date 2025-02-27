@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { EquipmentContext } from "./EquipmentContext";
-import { AxiosPrivado } from "../../Axios/Axios";
+import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { ListarEquipos, GuardarEquipo } from "../../Configuration/ApiUrls";
 import { useContextUsuario } from "../user/UserContext";
 
@@ -24,9 +24,8 @@ export const EquipmentState = (props) => {
 
   // Función para obtener la lista de equipos
   const ActualizarLista = async () => {
-    AxiosPrivado.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     try {
-      const respuesta = await AxiosPrivado.get(ListarEquipos);
+      const respuesta = await AxiosPublico.get(ListarEquipos);
       const data = respuesta.data;
       setListaEquipos(data); // Asume que la respuesta ya es un array de equipos
     } catch (error) {

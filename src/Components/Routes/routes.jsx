@@ -14,7 +14,8 @@ import Home from '../Login/Menu/Home';
 
 //Equipos
 import HomeEquipos from '../Plantilla/PlantillaEquipos/Home';
-import  HomeEquipo  from "../Plantilla/PlantillaEquipos/Home";
+import  ListarEquipos  from "../Plantilla/PlantillaEquipos/Home";
+import GuardarEquipo from '../Plantilla/PlantillaEquipos/Home';
 
 
 
@@ -36,7 +37,8 @@ export const routes = createBrowserRouter(
      <Route element={<AutenticacionRoute />}>
         <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>      
           <Route index element={<HomeEquipos />} />
-          <Route path="home" element={<HomeEquipo />} /> 
+          <Route path="listar" elemnt={<ListarEquipos />} />
+          <Route path="guardar" elemnt={<GuardarEquipo />} />
         
         
       
