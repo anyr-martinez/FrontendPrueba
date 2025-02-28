@@ -11,7 +11,7 @@ export default function HomeEquipo() {
   const [showModal, setShowModal] = useState(false);
   const [modo, setModo] = useState("Agregar");
   const [equipoSeleccionado, setEquipoSeleccionado] = useState({
-    id: "",
+    id_equipo: "",
     descripcion: "",
     tipo: "",
     numero_serie: "",
@@ -19,7 +19,6 @@ export default function HomeEquipo() {
   });
   const [filtros, setFiltros] = useState({
     id: "",
-    descripcion: "",
     tipo: "",
     fecha_registro: "",
   });
@@ -28,80 +27,95 @@ export default function HomeEquipo() {
     obtenerEquipos();
   }, []);
 
-  // Obtener los equipos al cargar el componente
   const obtenerEquipos = async () => {
     try {
       const respuesta = await AxiosPublico.get(ListarEquipos);
-      setEquipos(respuesta.data.data); // Establece la lista de equipos
+      setEquipos(respuesta.data.data);
     } catch (error) {
       console.error("Error al obtener los equipos:", error.response ? error.response.data.data : error);
     }
   };
 
-  // Mostrar el modal con el modo adecuado (Agregar, Editar, Eliminar)
-  const handleShow = (modo, equipo = { id: "", descripcion: "", tipo: "", numero_serie: "", fecha_registro: "" }) => {
-    setModo(modo); // Establece el modo (Agregar, Editar, Eliminar)
-    setEquipoSeleccionado(equipo); // Establece el equipo seleccionado
-    setShowModal(true); // Muestra el modal
+  const handleShow = (modo, equipo = { id_equipo: "", descripcion: "", tipo: "", numero_serie: "", fecha_registro: "" }) => {
+    console.log("Equipo seleccionado para el modal:", equipo); // Verifica el equipo antes de abrir el modal
+    setModo(modo);
+    setEquipoSeleccionado(equipo);
+    setShowModal(true);
   };
 
-  // Guardar, Editar o Eliminar un equipo
   const handleSave = async () => {
     try {
+      console.log("ID del equipo seleccionado:", equipoSeleccionado.id_equipo); // Verifica el ID aquí
       if (!user || !user.token) {
         console.log("No token disponible, redirigiendo al login");
         window.location.href = "/home"; // Redirigir al home si no hay token
         return;
       }
-
       let response;
 
-      // Dependiendo del modo, se realiza la acción correspondiente
       if (modo === "Agregar") {
         response = await AxiosPrivado.post(GuardarEquipo, equipoSeleccionado, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         });
-        setEquipos((prevEquipos) => [...prevEquipos, response.data]); 
-        obtenerEquipos(); // Actualiza la lista con el nuevo equipo
+        setEquipos((prevEquipos) => [...prevEquipos, response.data]);
+        obtenerEquipos();
         mostrarAlertaOK("Equipo Creado Exitosamente!");
       } else if (modo === "Editar") {
-        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id}`, equipoSeleccionado, {
+        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id_equipo}`, equipoSeleccionado, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         });
         setEquipos((prevEquipos) =>
           prevEquipos.map((equipo) =>
-            equipo.id === equipoSeleccionado.id ? response.data : equipo
+            equipo.id_equipo === equipoSeleccionado.id_equipo ? response.data : equipo
           )
         );
+        obtenerEquipos();
         mostrarAlertaOK("Equipo Actualizado Exitosamente!");
       } else if (modo === "Eliminar") {
-        response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id}`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        setEquipos((prevEquipos) =>
-          prevEquipos.filter((equipo) => equipo.id !== equipoSeleccionado.id)
-        );
-        mostrarAlertaOK("Equipo Eliminado Exitosamente!");
-      }
+        if (equipoSeleccionado.id_equipo) {
+          try {
+            // Hacemos la solicitud DELETE pasando el ID en la URL
+            response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id_equipo}`, {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+            });
 
-      setShowModal(false); // Cierra el modal
-    } catch (error) {
-      console.error("Error al guardar el equipo:", error);
-      mostrarAlertaError("Error al crear un equipo nuevo");
-      if (error.response && error.response.status === 401) {
-        sessionStorage.removeItem("user"); // Eliminar el token si es inválido
-        window.location.href = "/"; // Redirigir al login
+            if (response.status === 200 || response.status === 201) {
+              setEquipos((prevEquipos) =>
+                prevEquipos.filter((equipo) => equipo.id_equipo !== equipoSeleccionado.id_equipo)
+              );
+              obtenerEquipos();
+              console.log("ID del equipo seleccionado:", equipoSeleccionado.id_equipo);
+              mostrarAlertaOK("Equipo Eliminado Exitosamente!");
+            } else {
+              mostrarAlertaError("Error al eliminar el equipo");
+            }
+          } catch (error) {
+            console.error("Error al realizar la operación:", error);
+            if (error.response && error.response.status === 401) {
+              sessionStorage.removeItem("user");
+              window.location.href = "/";
+            }
+            mostrarAlertaError("Error al realizar la operación, por favor intenta nuevamente.");
+          }
+        } 
       }
+      setShowModal(false); // Cerrar el modal después de la operación
+    } catch (error) {
+      console.error("Error al realizar la operación:", error);
+      mostrarAlertaError("Error al realizar la operación, por favor intenta nuevamente.");
     }
   };
 
-  // Manejar cambios en los filtros
+  const obtenerValoresUnicos = (campo) => {
+    return [...new Set(equipos.map((equipo) => equipo[campo]))];
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFiltros((prevFilters) => ({
@@ -110,13 +124,11 @@ export default function HomeEquipo() {
     }));
   };
 
-  // Filtrar los equipos según los filtros establecidos
   const filteredEquipos = equipos.filter((equipo) => {
     return (
       (filtros.id === "" || equipo.id_equipo.toString().includes(filtros.id)) &&
-      (filtros.descripcion === "" || equipo.descripcion.toLowerCase().includes(filtros.descripcion.toLowerCase())) &&
-      (filtros.tipo === "" || equipo.tipo.toLowerCase().includes(filtros.tipo.toLowerCase())) &&
-      (filtros.fecha_registro === "" || equipo.fecha_registro.includes(filtros.fecha_registro))
+      (filtros.tipo === "" || equipo.tipo === filtros.tipo) &&
+      (filtros.fecha_registro === "" || equipo.fecha_registro === filtros.fecha_registro)
     );
   });
 
@@ -135,38 +147,37 @@ export default function HomeEquipo() {
           </Button>
 
           {/* Filtros */}
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Filtrar por ID"
-              name="id"
-              value={filtros.id}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Filtrar por Descripción"
-              name="descripcion"
-              value={filtros.descripcion}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              className="form-control mb-2"
-              placeholder="Filtrar por Tipo"
-              name="tipo"
-              value={filtros.tipo}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="date"
-              className="form-control mb-2"
-              name="fecha_registro"
-              value={filtros.fecha_registro}
-              onChange={handleFilterChange}
-            />
+          <div className="mb-3 row">
+            <div className="col-md-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Filtrar por ID"
+                name="id"
+                value={filtros.id}
+                onChange={handleFilterChange}
+              />
+            </div>
+            <div className="col-md-3">
+              <select className="form-control" name="tipo" value={filtros.tipo} onChange={handleFilterChange}>
+                <option value="">Filtrar por Tipo</option>
+                {obtenerValoresUnicos("tipo").map((tipo) => (
+                  <option key={tipo} value={tipo}>
+                    {tipo}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <select className="form-control" name="fecha_registro" value={filtros.fecha_registro} onChange={handleFilterChange}>
+                <option value="">Filtrar por Fecha de Registro</option>
+                {obtenerValoresUnicos("fecha_registro").map((fecha) => (
+                  <option key={fecha} value={fecha}>
+                    {new Date(fecha).toLocaleDateString()}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="card">
@@ -184,7 +195,7 @@ export default function HomeEquipo() {
                 </thead>
                 <tbody>
                   {filteredEquipos
-                    .filter((equipo) => equipo.estado === 1) // Filtro para que solo muestre los equipos activos
+                    .filter((equipo) => equipo.estado === 1)
                     .map((equipo) => (
                       <tr key={equipo.id_equipo}>
                         <td>{equipo.id_equipo}</td>
@@ -226,7 +237,7 @@ export default function HomeEquipo() {
                   onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, descripcion: e.target.value })}
                 />
               </Form.Group>
-              <Form.Group className="mt-2">
+              <Form.Group>
                 <Form.Label>Tipo</Form.Label>
                 <Form.Control
                   type="text"
@@ -234,7 +245,7 @@ export default function HomeEquipo() {
                   onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, tipo: e.target.value })}
                 />
               </Form.Group>
-              <Form.Group className="mt-2">
+              <Form.Group>
                 <Form.Label>Número de Serie</Form.Label>
                 <Form.Control
                   type="text"
@@ -242,25 +253,26 @@ export default function HomeEquipo() {
                   onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, numero_serie: e.target.value })}
                 />
               </Form.Group>
-              <Form.Group className="mt-2">
-                <Form.Label>Fecha de Entrada</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={equipoSeleccionado.fecha_registro}
-                  onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, fecha_registro: e.target.value })}
-                />
-              </Form.Group>
+              <Form.Group>
+            <Form.Label>Fecha de Registro</Form.Label>
+            <Form.Control
+              type="date"
+              value={equipoSeleccionado.fecha_registro ? new Date(equipoSeleccionado.fecha_registro).toISOString().split('T')[0] : ''}
+              onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, fecha_registro: e.target.value })}
+            />
+          </Form.Group>
+
             </Form>
           ) : (
-            <p>¿Estás seguro de que deseas eliminar este equipo?</p>
+            <p>¿Estás seguro de que quieres eliminar este equipo?</p>
           )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cancelar
+            Cerrar
           </Button>
           <Button variant={modo === "Eliminar" ? "danger" : "primary"} onClick={handleSave}>
-            {modo}
+            {modo === "Eliminar" ? "Eliminar" : "Guardar"}
           </Button>
         </Modal.Footer>
       </Modal>

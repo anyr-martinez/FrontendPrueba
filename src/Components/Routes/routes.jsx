@@ -16,6 +16,8 @@ import Home from '../Login/Menu/Home';
 import HomeEquipos from '../Plantilla/PlantillaEquipos/Home';
 import  ListarEquipos  from "../Plantilla/PlantillaEquipos/Home";
 import GuardarEquipo from '../Plantilla/PlantillaEquipos/Home';
+import EliminarEquipo  from "../Plantilla/PlantillaEquipos/Home";
+import ActualizarEquipo  from "../Plantilla/PlantillaEquipos/Home";
 
 
 
@@ -39,6 +41,8 @@ export const routes = createBrowserRouter(
           <Route index element={<HomeEquipos />} />
           <Route path="listar" elemnt={<ListarEquipos />} />
           <Route path="guardar" elemnt={<GuardarEquipo />} />
+          <Route path="eliminar" element={<EliminarEquipo />} />
+          <Route path="actualizar" element={<ActualizarEquipo />} />
         
         
       
