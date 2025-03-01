@@ -21,29 +21,28 @@ const SideNav = () => {
   };
 
   const isActive = (path) => {
-    return location.pathname === path ? "active bg-white text-dark" : "";
+    return location.pathname === path
+      ? "active bg-white text-dark shadow-lg rounded"
+      : "text-black";
   };
-
+  
   return (
     <aside
-      className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column justify-between"
-      style={{ backgroundColor: "#145a32" }}
+      className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column"
+      style={{ backgroundColor: "#FF7F32" }}
     >
-      {/* Logo de Cooperativa Taulabé */}
+      {/* Logo */}
       <div
-        className="brand-link d-flex flex-column align-items-center justify-content-center"
+        className="brand-link d-flex flex-column align-items-center justify-content-center p-3"
         style={{
-          backgroundColor: "#f39c12",
-          color: "#007236",
+          backgroundColor: "#8B8D8C",
+          color: "#212529",
           fontWeight: "bold",
-          padding: "20px",
-          borderBottom: "2px solid #007236",
           textAlign: "center",
-          fontSize: "1.2rem",
-          borderRadius: "0 0 10px 10px",
+          borderBottom: "6px solid #007236",
+          borderRadius: "5 0 10px 10px",
         }}
       >
-        {/* Logo grande */}
         <img
           src={logo2}
           className="img-circle elevation-3"
@@ -52,79 +51,56 @@ const SideNav = () => {
             width: "100px",
             height: "100px",
             marginBottom: "10px",
-            border: "3px solid #C",
-            padding: "5px",
-            backgroundColor: "#fff",
+            border: "1px solid #007236",
+            padding: "1px",
+            backgroundColor: "#007236",
             borderRadius: "50%",
           }}
         />
-
-        {/* Nombre de la cooperativa debajo del logo */}
-        <p style={{ margin: 0, fontSize: "1.5rem", fontWeight: "bold" }}>
-          Cooperativa Taulabé
-        </p>
+        <p className="m-0 fs-5 fw-bold" style={{ color: "#ffffff"}}>Cooperativa Taulabé</p>
       </div>
 
-      <div className="sidebar">
-        <nav className="mt-3">
+      {/* Menú */}
+      <div className="sidebar mt-3">
+        <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
-            {/* Lista de Equipos */}
-            <li className="nav-item">
-              <Link
-                to="/dashboard-equipments/lista-equipos"
-                className={`nav-link rounded-lg mb-2 ${isActive("/dashboard-equipments/lista-equipos")}`}
-              >
-                <i className="nav-icon fas fa-laptop mr-2"></i>
-                <p className="m-0">Lista de Equipos</p>
-              </Link>
-            </li>
-            {/* Gestión de Equipos */}
-            <li className="nav-item">
-              <Link
-                to="/gestion-equipos"
-                className={`nav-link rounded-lg mb-2 ${isActive("/gestion-equipos")}`}
-              >
-                <i className="nav-icon fas fa-cogs mr-2"></i>
-                <p className="m-0">Gestión de Equipos</p>
-              </Link>
-            </li>
-            {/* Mantenimiento de Equipos */}
-            <li className="nav-item">
-              <Link
-                to="/mantenimiento-equipos"
-                className={`nav-link rounded-lg mb-2 ${isActive("/mantenimiento-equipos")}`}
-              >
-                <i className="nav-icon fas fa-wrench mr-2"></i>
-                <p className="m-0">Mantenimiento de Equipos</p>
-              </Link>
-            </li>
-            {/* Historial de Mantenimientos */}
-            <li className="nav-item">
-              <Link
-                to="/historial-mantenimientos"
-                className={`nav-link rounded-lg mb-2 ${isActive("/historial-mantenimientos")}`}
-              >
-                <i className="nav-icon fas fa-history mr-2"></i>
-                <p className="m-0">Historial de Mantenimientos</p>
-              </Link>
-            </li>
+            <MenuItem
+              path="/listar"
+              icon="fas fa-laptop"
+              label="Lista de Equipos"
+              isActive={isActive}
+            />
+            <MenuItem
+              path="/gestion-equipos"
+              icon="fas fa-cogs"
+              label="Gestión de Equipos"
+              isActive={isActive}
+            />
+            <MenuItem
+              path="/mantenimiento-equipos"
+              icon="fas fa-wrench"
+              label="Mantenimiento de Equipos"
+              isActive={isActive}
+            />
+            
           </ul>
         </nav>
       </div>
 
-      {/* Footer con botón de cerrar sesión */}
-      <div className="sidebar-footer p-3 border-top mt-auto d-flex justify-center align-items-center">
+      {/* Footer con botón de salir */}
+      <div className="sidebar-footer p-3 border-top mt-auto text-center">
         <button
           onClick={handleLogout}
-          className="btn btn-link d-flex align-items-center gap-2"
+          className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2"
           style={{
-            color: "#f0f3f4",
-            textDecoration: "none",
+            backgroundColor: "#8B8C8D",
+            color: "#FFFFFF",
+            transition: "all 0.3s ease",
             fontWeight: "bold",
-            transition: "color 0.3s ease",
+            borderRadius: "5px",
           }}
-          onMouseEnter={(e) => (e.target.style.color = "#d7dbdd")}
-          onMouseLeave={(e) => (e.target.style.color = "#d0d3d4")}
+          onMouseEnter={(e) => (e.target.style.background = "#ADB4BE")}
+          onMouseLeave={(e) => (e.target.style.background = "#8B8D8C")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Salir</span>
@@ -133,5 +109,18 @@ const SideNav = () => {
     </aside>
   );
 };
+
+// Componente para cada ítem del menú
+const MenuItem = ({ path, icon, label, isActive }) => (
+  <li className="nav-item">
+    <Link
+      to={path}
+      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(path)}`}
+    >
+      <i className={`nav-icon ${icon} me-2`} style={{color: "#ffffff"}}></i>
+      <p className="m-0" style={{color: "#ffffff"}}>{label}</p>
+    </Link>
+  </li>
+);
 
 export default SideNav;

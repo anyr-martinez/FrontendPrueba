@@ -18,7 +18,7 @@ const Header = () => {
     if (usuario && usuario.usuario) {
       return <span style={{ color: "#145a32", fontWeight: "600" }}>Bienvenido, {usuario.nombre}</span>;
     }
-    return <span style={{ color: "#888888" }}>Invitado</span>;
+    return <span style={{ color: "#FF6600" }}>Invitado</span>;
   };
   
 
@@ -40,7 +40,7 @@ const Header = () => {
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
           <a className="nav-link" href="#">
-            <FontAwesomeIcon icon={faUser} style={{ color:  "#f39c12"}} className="mr-2" />
+            <FontAwesomeIcon icon={faUser} style={{ color:  "#FF6600"}} className="mr-2" />
             {renderUsername()}
           </a>
         </li>

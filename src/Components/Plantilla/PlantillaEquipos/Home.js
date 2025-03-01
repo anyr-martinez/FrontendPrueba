@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
-import { ListarEquipos, GuardarEquipo, ActualizarEquipo, EliminarEquipo } from "../../Configuration/ApiUrls";
+import {
+  ListarEquipos,
+  GuardarEquipo,
+  ActualizarEquipo,
+  EliminarEquipo,
+} from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
-import { mostrarAlertaError, mostrarAlertaOK } from "../../SweetAlert/SweetAlert";
+import {
+  mostrarAlertaError,
+  mostrarAlertaOK,
+} from "../../SweetAlert/SweetAlert";
 
 export default function HomeEquipo() {
   const [user] = useSessionStorage("user", {});
@@ -32,11 +40,23 @@ export default function HomeEquipo() {
       const respuesta = await AxiosPublico.get(ListarEquipos);
       setEquipos(respuesta.data.data);
     } catch (error) {
-      console.error("Error al obtener los equipos:", error.response ? error.response.data.data : error);
+      console.error(
+        "Error al obtener los equipos:",
+        error.response ? error.response.data.data : error
+      );
     }
   };
 
-  const handleShow = (modo, equipo = { id_equipo: "", descripcion: "", tipo: "", numero_serie: "", fecha_registro: "" }) => {
+  const handleShow = (
+    modo,
+    equipo = {
+      id_equipo: "",
+      descripcion: "",
+      tipo: "",
+      numero_serie: "",
+      fecha_registro: "",
+    }
+  ) => {
     console.log("Equipo seleccionado para el modal:", equipo); // Verifica el equipo antes de abrir el modal
     setModo(modo);
     setEquipoSeleccionado(equipo);
@@ -63,14 +83,20 @@ export default function HomeEquipo() {
         obtenerEquipos();
         mostrarAlertaOK("Equipo Creado Exitosamente!");
       } else if (modo === "Editar") {
-        response = await AxiosPrivado.put(`${ActualizarEquipo}/${equipoSeleccionado.id_equipo}`, equipoSeleccionado, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
+        response = await AxiosPrivado.put(
+          `${ActualizarEquipo}/${equipoSeleccionado.id_equipo}`,
+          equipoSeleccionado,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
         setEquipos((prevEquipos) =>
           prevEquipos.map((equipo) =>
-            equipo.id_equipo === equipoSeleccionado.id_equipo ? response.data : equipo
+            equipo.id_equipo === equipoSeleccionado.id_equipo
+              ? response.data
+              : equipo
           )
         );
         obtenerEquipos();
@@ -79,18 +105,26 @@ export default function HomeEquipo() {
         if (equipoSeleccionado.id_equipo) {
           try {
             // Hacemos la solicitud DELETE pasando el ID en la URL
-            response = await AxiosPrivado.delete(`${EliminarEquipo}/${equipoSeleccionado.id_equipo}`, {
-              headers: {
-                Authorization: `Bearer ${user.token}`,
-              },
-            });
+            response = await AxiosPrivado.delete(
+              `${EliminarEquipo}/${equipoSeleccionado.id_equipo}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+              }
+            );
 
             if (response.status === 200 || response.status === 201) {
               setEquipos((prevEquipos) =>
-                prevEquipos.filter((equipo) => equipo.id_equipo !== equipoSeleccionado.id_equipo)
+                prevEquipos.filter(
+                  (equipo) => equipo.id_equipo !== equipoSeleccionado.id_equipo
+                )
               );
               obtenerEquipos();
-              console.log("ID del equipo seleccionado:", equipoSeleccionado.id_equipo);
+              console.log(
+                "ID del equipo seleccionado:",
+                equipoSeleccionado.id_equipo
+              );
               mostrarAlertaOK("Equipo Eliminado Exitosamente!");
             } else {
               mostrarAlertaError("Error al eliminar el equipo");
@@ -101,14 +135,18 @@ export default function HomeEquipo() {
               sessionStorage.removeItem("user");
               window.location.href = "/";
             }
-            mostrarAlertaError("Error al realizar la operación, por favor intenta nuevamente.");
+            mostrarAlertaError(
+              "Error al realizar la operación, por favor intenta nuevamente."
+            );
           }
-        } 
+        }
       }
       setShowModal(false); // Cerrar el modal después de la operación
     } catch (error) {
       console.error("Error al realizar la operación:", error);
-      mostrarAlertaError("Error al realizar la operación, por favor intenta nuevamente.");
+      mostrarAlertaError(
+        "Error al realizar la operación, por favor intenta nuevamente."
+      );
     }
   };
 
@@ -128,7 +166,8 @@ export default function HomeEquipo() {
     return (
       (filtros.id === "" || equipo.id_equipo.toString().includes(filtros.id)) &&
       (filtros.tipo === "" || equipo.tipo === filtros.tipo) &&
-      (filtros.fecha_registro === "" || equipo.fecha_registro === filtros.fecha_registro)
+      (filtros.fecha_registro === "" ||
+        equipo.fecha_registro === filtros.fecha_registro)
     );
   });
 
@@ -136,52 +175,86 @@ export default function HomeEquipo() {
     <div className="content-wrapper">
       <section className="content-header">
         <div className="container-fluid">
-          <h1 className="text-center text-success">Gestión de Equipos de TI</h1>
+          <h1
+            className="text-center text-success"
+            style={{
+              fontSize: "2.5rem", // Aumentamos el tamaño de la fuente
+              fontWeight: "900", // Hacemos la fuente más negrita
+              color: "#28a745", // Color verde similar al de la marca
+              textTransform: "uppercase",
+              letterSpacing: "1px", // Espaciado entre letras
+              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)", // Sombra sutil
+              marginTop: "1px",
+            }}
+          >
+            Gestión de Equipos de TI
+          </h1>
         </div>
       </section>
 
       <section className="content">
         <div className="container-fluid">
-          <Button variant="success" className="mb-3" onClick={() => handleShow("Agregar")}>
-            Agregar Equipo
-          </Button>
+          <div className="d-flex justify-content-between mb-3">
+            {/* Botón para agregar equipo */}
+            <Button
+              variant="success"
+              className="mr-3"
+              onClick={() => handleShow("Agregar")}
+            >
+              Agregar Equipo
+            </Button>
 
-          {/* Filtros */}
-          <div className="mb-3 row">
-            <div className="col-md-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Filtrar por ID"
-                name="id"
-                value={filtros.id}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <select className="form-control" name="tipo" value={filtros.tipo} onChange={handleFilterChange}>
-                <option value="">Filtrar por Tipo</option>
-                {obtenerValoresUnicos("tipo").map((tipo) => (
-                  <option key={tipo} value={tipo}>
-                    {tipo}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <select className="form-control" name="fecha_registro" value={filtros.fecha_registro} onChange={handleFilterChange}>
-                <option value="">Filtrar por Fecha de Registro</option>
-                {obtenerValoresUnicos("fecha_registro").map((fecha) => (
-                  <option key={fecha} value={fecha}>
-                    {new Date(fecha).toLocaleDateString()}
-                  </option>
-                ))}
-              </select>
+            {/* Filtros */}
+            <div className="row" style={{ marginLeft: "10%", marginRight: "auto" }}>
+              <div className="col-md-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Filtrar por ID"
+                  name="id"
+                  value={filtros.id}
+                  onChange={handleFilterChange}
+                />
+              </div>
+              <div className="col-md-3">
+                <select
+                  className="form-control"
+                  name="tipo"
+                  value={filtros.tipo}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">Filtrar por Tipo</option>
+                  {obtenerValoresUnicos("tipo").map((tipo) => (
+                    <option key={tipo} value={tipo}>
+                      {tipo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-4">
+                <select
+                  className="form-control"
+                  name="fecha_registro"
+                  value={filtros.fecha_registro}
+                  onChange={handleFilterChange}
+                >
+                  <option value="">Filtrar por Fecha </option>
+                  {obtenerValoresUnicos("fecha_registro").map((fecha) => (
+                    <option key={fecha} value={fecha}>
+                      {new Date(fecha).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
 
+          {/* Tabla de Equipos */}
           <div className="card">
-            <div className="card-body">
+            <div
+              className="card-body"
+              style={{ maxHeight: "400px", overflowY: "auto" }}
+            >
               <table className="table table-bordered table-striped">
                 <thead>
                   <tr>
@@ -202,13 +275,22 @@ export default function HomeEquipo() {
                         <td>{equipo.descripcion}</td>
                         <td>{equipo.tipo}</td>
                         <td>{equipo.numero_serie}</td>
-                        <td>{new Date(equipo.fecha_registro).toLocaleDateString()}</td>
-
                         <td>
-                          <Button variant="warning" size="sm" onClick={() => handleShow("Editar", equipo)}>
+                          {new Date(equipo.fecha_registro).toLocaleDateString()}
+                        </td>
+                        <td>
+                          <Button
+                            variant="warning"
+                            size="sm"
+                            onClick={() => handleShow("Editar", equipo)}
+                          >
                             Editar
                           </Button>{" "}
-                          <Button variant="danger" size="sm" onClick={() => handleShow("Eliminar", equipo)}>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleShow("Eliminar", equipo)}
+                          >
                             Eliminar
                           </Button>
                         </td>
@@ -222,7 +304,12 @@ export default function HomeEquipo() {
       </section>
 
       {/* Modal para agregar, editar o eliminar un equipo */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" keyboard={false}>
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        backdrop="static"
+        keyboard={false}
+      >
         <Modal.Header closeButton>
           <Modal.Title>{modo} Equipo</Modal.Title>
         </Modal.Header>
@@ -234,7 +321,12 @@ export default function HomeEquipo() {
                 <Form.Control
                   type="text"
                   value={equipoSeleccionado.descripcion}
-                  onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, descripcion: e.target.value })}
+                  onChange={(e) =>
+                    setEquipoSeleccionado({
+                      ...equipoSeleccionado,
+                      descripcion: e.target.value,
+                    })
+                  }
                 />
               </Form.Group>
               <Form.Group>
@@ -242,7 +334,12 @@ export default function HomeEquipo() {
                 <Form.Control
                   type="text"
                   value={equipoSeleccionado.tipo}
-                  onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, tipo: e.target.value })}
+                  onChange={(e) =>
+                    setEquipoSeleccionado({
+                      ...equipoSeleccionado,
+                      tipo: e.target.value,
+                    })
+                  }
                 />
               </Form.Group>
               <Form.Group>
@@ -250,18 +347,33 @@ export default function HomeEquipo() {
                 <Form.Control
                   type="text"
                   value={equipoSeleccionado.numero_serie}
-                  onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, numero_serie: e.target.value })}
+                  onChange={(e) =>
+                    setEquipoSeleccionado({
+                      ...equipoSeleccionado,
+                      numero_serie: e.target.value,
+                    })
+                  }
                 />
               </Form.Group>
               <Form.Group>
-            <Form.Label>Fecha de Registro</Form.Label>
-            <Form.Control
-              type="date"
-              value={equipoSeleccionado.fecha_registro ? new Date(equipoSeleccionado.fecha_registro).toISOString().split('T')[0] : ''}
-              onChange={(e) => setEquipoSeleccionado({ ...equipoSeleccionado, fecha_registro: e.target.value })}
-            />
-          </Form.Group>
-
+                <Form.Label>Fecha de Registro</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={
+                    equipoSeleccionado.fecha_registro
+                      ? new Date(equipoSeleccionado.fecha_registro)
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
+                  onChange={(e) =>
+                    setEquipoSeleccionado({
+                      ...equipoSeleccionado,
+                      fecha_registro: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
             </Form>
           ) : (
             <p>¿Estás seguro de que quieres eliminar este equipo?</p>
@@ -271,7 +383,10 @@ export default function HomeEquipo() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cerrar
           </Button>
-          <Button variant={modo === "Eliminar" ? "danger" : "primary"} onClick={handleSave}>
+          <Button
+            variant={modo === "Eliminar" ? "danger" : "primary"}
+            onClick={handleSave}
+          >
             {modo === "Eliminar" ? "Eliminar" : "Guardar"}
           </Button>
         </Modal.Footer>
