@@ -3,20 +3,19 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { mostrarAlertaPregunta } from "../../SweetAlert/SweetAlert";
 import logo2 from "../../../assets/images/logo2.jpg";
 
-const Aside = () => {
+const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = (e) => {
-    localStorage.removeItem("token"); // Elimina el token o datos de sesión
     e.preventDefault();
     mostrarAlertaPregunta(
       (confirmed) => {
         if (confirmed) {
-          navigate("/"); // Redirige al inicio si se confirma
+          navigate("/Home"); // Redirige al inicio si se confirma
         }
       },
-      "¿Está seguro que desea Cerrar Sesión?",
+      "¿Está seguro que desea regresar al Menú?",
       "question"
     );
   };
@@ -66,21 +65,15 @@ const Aside = () => {
         <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
             <MenuItem
+              path="/reportes"
+              icon="fas fa-cogs"
+              label="Gestión de Reportes"
+              isActive={isActive}
+            />
+            <MenuItem
               path="/dashboard-equipments"
               icon="fas fa-desktop"
               label="Gestion de Equipos"
-              isActive={isActive}
-            />
-            <MenuItem
-              path="/dashboard-maintenances"
-              icon="fas fa-tools"
-              label="Gestion de Mantenimientos"
-              isActive={isActive}
-            />
-            <MenuItem
-              path="/configuration"
-              icon="fas fa-cogs"
-              label="Configuración"
               isActive={isActive}
             />
             
@@ -104,7 +97,7 @@ const Aside = () => {
           onMouseLeave={(e) => (e.target.style.background = "#007236")}
         >
           <i className="fas fa-sign-out-alt"></i>
-          <span>Cerrar Sesión</span>
+          <span>Salir</span>
         </button>
       </div>
     </aside>
@@ -124,4 +117,4 @@ const MenuItem = ({ path, icon, label, isActive }) => (
   </li>
 );
 
-export default Aside;
+export default SideNav;

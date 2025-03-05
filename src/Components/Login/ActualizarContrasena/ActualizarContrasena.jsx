@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import fondo from "../../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,8 +6,9 @@ import { faKey, faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { AxiosPublico } from "../../Axios/Axios";
 import { mostrarAlertaOK, mostrarAlertaError } from "../../SweetAlert/SweetAlert";
 import zxcvbn from "zxcvbn";
+import { ActualizarContrasena } from "../../Configuration/ApiUrls";
 
-const ActualizarContrasena = () => {
+const UpdatePassword = () => {
   const { id } = useParams(); // Obtener el id del usuario desde los parámetros de la URL
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -16,6 +17,7 @@ const ActualizarContrasena = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // Controlar la fuerza de la contraseña
   const handlePasswordChange = (e) => {
     const password = e.target.value;
     setNewPassword(password);
@@ -23,6 +25,7 @@ const ActualizarContrasena = () => {
     setPasswordStrength(strength);
   };
 
+  // Enviar la solicitud para actualizar la contraseña
   const handleUpdatePassword = async (event) => {
     event.preventDefault();
 
@@ -37,13 +40,14 @@ const ActualizarContrasena = () => {
     }
 
     try {
-      const response = await AxiosPublico.put(`/update-password/${id}`, {
+      // Usamos la URL con el id del usuario
+      const response = await AxiosPublico.put(ActualizarContrasena(id), {
         newPass: newPassword,
       });
 
       mostrarAlertaOK("Contraseña actualizada correctamente.", "success");
       console.log("Password updated:", response.data);
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       if (error.response) {
         setError(error.response.data.message || "Error al actualizar la contraseña.");
@@ -110,7 +114,11 @@ const ActualizarContrasena = () => {
               <div className="progress">
                 <div
                   className={`progress-bar ${
-                    passwordStrength < 2 ? "bg-danger" : passwordStrength < 4 ? "bg-warning" : "bg-success"
+                    passwordStrength < 2
+                      ? "bg-danger"
+                      : passwordStrength < 4
+                      ? "bg-warning"
+                      : "bg-success"
                   }`}
                   role="progressbar"
                   style={{ width: `${(passwordStrength + 1) * 20}%` }}
@@ -163,7 +171,7 @@ const ActualizarContrasena = () => {
           <button
             className="btn btn-secondary mt-2"
             style={{ width: "300px" }}
-            onClick={() => navigate("/login")}
+           // onClick={() => navigate("/")}
           >
             Regresar al Login
           </button>
@@ -173,4 +181,5 @@ const ActualizarContrasena = () => {
   );
 };
 
-export default ActualizarContrasena;
+export default UpdatePassword;
+*/

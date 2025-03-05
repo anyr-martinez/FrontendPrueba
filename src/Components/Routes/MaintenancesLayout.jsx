@@ -1,14 +1,13 @@
 import React from 'react';
-import { useOutlet } from "react-router-dom";
-import { UserContext } from "../Context/user/UserContext";
+import { MaintenanceState} from "../Context/maintenance/MaintenanceState";
 import Maintenances from '../Maintenances/Maintenances';
 
 export const MaintenancesLayout = () => {
-  const outlet = useOutlet();
-  const { usuario } = UserContext();
+  
+
   return (
-    <maintenanceState>
+    <MaintenanceState>
       <Maintenances />
-    </maintenanceState>
+    </MaintenanceState>
   );
 };

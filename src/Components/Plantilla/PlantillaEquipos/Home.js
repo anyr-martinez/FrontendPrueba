@@ -168,6 +168,7 @@ export default function HomeEquipo() {
       (filtros.tipo === "" || equipo.tipo === filtros.tipo) &&
       (filtros.fecha_registro === "" ||
         equipo.fecha_registro === filtros.fecha_registro)
+        
     );
   });
 

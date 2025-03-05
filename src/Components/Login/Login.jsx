@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import fondo from "../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock,  faUser } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { UsuarioIniciarSesion } from "../Configuration/ApiUrls";
 import { AxiosPublico } from "../Axios/Axios";
 import {
@@ -19,31 +19,31 @@ const Login = () => {
   const [contrasena, setPassword] = useState("");
   const navigate = useNavigate();
   const { setLogin } = useContext(UserContext);
-  const [,setStoredUser] = useSessionStorage("user" , usuario);
+  const [, setStoredUser] = useSessionStorage("user", usuario);
   const { checkSpecialLogin } = useSpecialLogin();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     if (!usuario || !contrasena) {
       mostrarAlerta("Por favor, complete todos los campos.", "warning");
       return;
     }
-  
+
     if (checkSpecialLogin(usuario, contrasena)) {
       return;
     }
-  
+
     try {
       const response = await AxiosPublico.post(UsuarioIniciarSesion, {
         usuario: usuario,
         contrasena: contrasena,
       });
       //console.log(response);
-  
+
       if (response?.data.data && response.data.data.token) {
         const { token, usuario, nombre, id } = response.data.data;
-  
+
         // Guardar sesión
         setLogin({
           usuario: {
@@ -54,16 +54,14 @@ const Login = () => {
           token: token,
         });
         console.log("Usuario guradado en el contexto:", usuario);
-  
+
         // Guardar en sessionStorage
-        setStoredUser( {usuario, token} );
+        setStoredUser({ usuario, token });
         console.log("Token guardado:", token);
 
-      
-  
         // Redirigir al menú principal (dashboard)
         navigate("/Home", { state: { userId: usuario.id } });
-  
+
         mostrarAlertaOK("Inicio de sesión exitoso", "success");
       } else {
         mostrarAlertaError("Error en el inicio de sesión. Inténtelo de nuevo.");
@@ -72,8 +70,6 @@ const Login = () => {
       console.error("Error al iniciar sesión:", error);
       mostrarAlertaError("Usuario o contraseña incorrectos.");
     }
-
-  
   };
 
   return (
@@ -86,7 +82,6 @@ const Login = () => {
         height: "100vh",
         width: "100vw",
       }}
-      
     >
       <div
         className="p-4 rounded shadow"
@@ -141,9 +136,17 @@ const Login = () => {
             </span>
           </div>
 
+          {/*Iniciar sesion */}
           <button type="submit" className="btn btn-primary btn-block">
             Iniciar sesión
           </button>
+
+         {/* Olvidar Contrasena */}
+          <div className="text-center my-3">
+            <Link to="/actualizar-contrasena" className="text-primary">
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
 
           <div className="text-center my-3 position-relative">
             <span className="text-muted">- OR -</span>

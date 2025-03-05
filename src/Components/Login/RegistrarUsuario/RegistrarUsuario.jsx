@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxiosPublico } from "../../Axios/Axios";
-import { CrearUsuario, UsuarioExistente } from "../../Configuration/ApiUrls"; 
+import { CrearUsuario } from "../../Configuration/ApiUrls"; 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import fondo from "../../../assets/images/fondo.jpg";
@@ -45,26 +45,8 @@ const RegistroUsuario = () => {
     setPasswordStrength(strength);
   };
 
-  const verificarUsuarioExistente = async (usuario) => {
-    try {
-      const response = await AxiosPublico.post(UsuarioExistente, { usuario });
-      if (response.data && response.data.existe) {
-        mostrarAlerta("El usuario ya existe. Por favor, elija otro.", "warning");
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error("Error al verificar el usuario:", error);
-      setError("Error al verificar el usuario. Por favor, inténtelo de nuevo.");
-      return false;
-    }
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const usuarioExiste = await verificarUsuarioExistente(formData.usuario);
-    if (usuarioExiste) return;
 
     if (!formData.nombre || !formData.usuario || !formData.contrasena || !formData.confirmarContrasena) {
       mostrarAlerta("Por favor, complete todos los campos obligatorios.", "warning");

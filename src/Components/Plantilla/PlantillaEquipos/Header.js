@@ -40,7 +40,7 @@ const Header = () => {
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
           <a className="nav-link" href="#">
-            <FontAwesomeIcon icon={faUser} style={{ color:  "#FF6600"}} className="mr-2" />
+            <FontAwesomeIcon icon={faUser} style={{ color:  "#FF7F32"}} className="mr-2" />
             {renderUsername()}
           </a>
         </li>

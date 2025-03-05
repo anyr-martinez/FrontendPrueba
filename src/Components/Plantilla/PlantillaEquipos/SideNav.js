@@ -35,7 +35,7 @@ const SideNav = () => {
       <div
         className="brand-link d-flex flex-column align-items-center justify-content-center p-3"
         style={{
-          backgroundColor: "#8B8D8C",
+          backgroundColor: "#F0F0E6",
           color: "#212529",
           fontWeight: "bold",
           textAlign: "center",
@@ -57,7 +57,7 @@ const SideNav = () => {
             borderRadius: "50%",
           }}
         />
-        <p className="m-0 fs-5 fw-bold" style={{ color: "#ffffff"}}>Cooperativa Taulabé</p>
+        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236"}}>Cooperativa Taulabé</p>
       </div>
 
       {/* Menú */}
@@ -65,19 +65,13 @@ const SideNav = () => {
         <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
             <MenuItem
-              path="/listar"
-              icon="fas fa-laptop"
-              label="Lista de Equipos"
-              isActive={isActive}
-            />
-            <MenuItem
-              path="/gestion-equipos"
+              path="/dashboard-equipments/reportes-equipo"
               icon="fas fa-cogs"
-              label="Gestión de Equipos"
+              label="Gestión de Reportes"
               isActive={isActive}
             />
             <MenuItem
-              path="/mantenimiento-equipos"
+              path="/dashboard-maintenances"
               icon="fas fa-wrench"
               label="Mantenimiento de Equipos"
               isActive={isActive}
@@ -93,14 +87,14 @@ const SideNav = () => {
           onClick={handleLogout}
           className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2"
           style={{
-            backgroundColor: "#8B8C8D",
-            color: "#FFFFFF",
+            backgroundColor: "#007236",
+            color: "#F0F0E6",
             transition: "all 0.3s ease",
             fontWeight: "bold",
             borderRadius: "5px",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "#ADB4BE")}
-          onMouseLeave={(e) => (e.target.style.background = "#8B8D8C")}
+          onMouseEnter={(e) => (e.target.style.background = "rgba(0, 200, 83, 0.7)")}
+          onMouseLeave={(e) => (e.target.style.background = "#007236")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Salir</span>
