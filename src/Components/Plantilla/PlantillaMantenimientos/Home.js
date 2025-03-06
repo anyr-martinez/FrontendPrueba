@@ -6,7 +6,7 @@ import {
   GuardarMantenimiento,
   ActualizarMantenimiento,
   EliminarMantenimiento,
-  ObtenerEquipoById, // Esta API es la que usas para obtener el equipo por ID
+  ListarEquipos, // Esta API es la que usas para obtener el equipo por ID
 } from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
 import {
@@ -19,6 +19,7 @@ export default function HomeMantenimientos() {
   const [mantenimientos, setMantenimientos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modo, setModo] = useState("Agregar");
+  const [equipos, setEquipos] = useState([]);
   const [mantenimientoseleccionado, setMantenimientoSeleccionado] = useState({
     id_mantenimiento: "",
     id_equipo: "",
@@ -36,6 +37,7 @@ export default function HomeMantenimientos() {
 
   useEffect(() => {
     obtenerMantenimientos();
+    obtenerEquipos(); // Obtén los equipos cuando se carga el componente
   }, []);
 
   const obtenerMantenimientos = async () => {
@@ -50,9 +52,19 @@ export default function HomeMantenimientos() {
     }
   };
 
+  const obtenerEquipos = async () => {
+    try {
+      const response = await AxiosPublico.get(ListarEquipos);
+      setEquipos(response.data.data); // Suponiendo que la respuesta contiene los datos de los equipos
+    } catch (error) {
+      console.error("Error al obtener los equipos:", error);
+    }
+  };
+
   const handleShow = (
     modo,
     mantenimiento = {
+      id_mantenimiento: "",
       id_equipo: "",
       equipo_descripcion: "",
       numero_serie: "",
@@ -184,60 +196,39 @@ export default function HomeMantenimientos() {
     );
   });
 
-  const handleIdChange = async (e) => {
-    const id = e.target.value.trim();  // Usamos trim() para eliminar espacios innecesarios
-  
-    // Verificamos si el ID está vacío
-    if (id === "") {
-      mostrarAlertaError("Por favor ingrese un ID válido");
-      setMantenimientoSeleccionado({
-        ...mantenimientoseleccionado,
-        equipo_descripcion: "",
-        numero_serie: "",
-      });
-      return;  // Salimos de la función para evitar hacer la consulta a la API
-    }
-  
-    // Si el ID no está vacío, actualizamos el estado
-    setMantenimientoSeleccionado({ ...mantenimientoseleccionado, id_equipo: id });
-  
+  const handleIdChange = async (id) => {
+    if (!id) return; // Si no hay ID, no hacer nada
+
     try {
-      // Hacemos la consulta a la API solo si el ID es válido
-      const respuesta = await AxiosPublico.get(`${ObtenerEquipoById}/${id}`);
-  
-      if (respuesta.data) {
-        // Si la respuesta tiene datos, actualizamos el estado con la descripción y número de serie
+      const equipoSeleccionado = equipos.find((equipo) => equipo.id === id);
+      if (equipoSeleccionado) {
         setMantenimientoSeleccionado({
           ...mantenimientoseleccionado,
-          equipo_descripcion: respuesta.data.equipo_descripcion,
-          numero_serie: respuesta.data.numero_serie,
-        });
-      } else {
-        // Si no se encuentran datos, mostramos un mensaje de error
-        mostrarAlertaError("Equipo no encontrado");
-        setMantenimientoSeleccionado({
-          ...mantenimientoseleccionado,
-          equipo_descripcion: "",
-          numero_serie: "",
+          equipo_descripcion: equipoSeleccionado.descripcion,
+          numero_serie: equipoSeleccionado.numero_serie,
         });
       }
     } catch (error) {
-      // Si hay un error en la consulta, mostramos un mensaje de error
-      mostrarAlertaError("Error al obtener el equipo");
-      setMantenimientoSeleccionado({
-        ...mantenimientoseleccionado,
-        equipo_descripcion: "",
-        numero_serie: "",
-      });
+      console.error("Error al seleccionar el equipo:", error);
     }
   };
-  
 
   return (
     <div className="content-wrapper">
       <section className="content-header">
         <div className="container-fluid">
-          <h1 className="text-center text-success" style={{ fontSize: "2.5rem", fontWeight: "900", color: "#28a745", textTransform: "uppercase", letterSpacing: "1px", textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)", marginTop: "1px" }}>
+          <h1
+            className="text-center text-success"
+            style={{
+              fontSize: "2.5rem",
+              fontWeight: "900",
+              color: "#28a745",
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
+              marginTop: "1px",
+            }}
+          >
             Gestión de Mantenimientos de TI
           </h1>
         </div>
@@ -253,7 +244,10 @@ export default function HomeMantenimientos() {
             >
               Agregar Mantenimiento
             </Button>
-            <div className="row" style={{ marginLeft: "10%", marginRight: "auto" }}>
+            <div
+              className="row"
+              style={{ marginLeft: "10%", marginRight: "auto" }}
+            >
               <div className="col-md-3">
                 <input
                   type="text"
@@ -319,13 +313,25 @@ export default function HomeMantenimientos() {
                   {filteredMantenimientos
                     .filter((mantenimiento) => mantenimiento.estado === 1)
                     .map((mantenimiento) => (
-                      <tr key={mantenimiento.id_mantenimiento} className="align-middle">
+                      <tr
+                        key={mantenimiento.id_mantenimiento}
+                        className="align-middle"
+                      >
                         <td>{mantenimiento.id_mantenimiento}</td>
+                        <td>{mantenimiento.id_equipo}</td>
                         <td>{mantenimiento.equipo_descripcion}</td>
                         <td>{mantenimiento.numero_serie}</td>
                         <td>{mantenimiento.descripcion}</td>
-                        <td>{new Date(mantenimiento.fecha_entrada).toLocaleDateString()}</td>
-                        <td>{new Date(mantenimiento.fecha_salida).toLocaleDateString()}</td>
+                        <td>
+                          {new Date(
+                            mantenimiento.fecha_entrada
+                          ).toLocaleDateString()}
+                        </td>
+                        <td>
+                          {new Date(
+                            mantenimiento.fecha_salida
+                          ).toLocaleDateString()}
+                        </td>
                         <td className="d-flex justify-content-center align-items-center gap-2">
                           <Button
                             variant="warning"
@@ -337,7 +343,9 @@ export default function HomeMantenimientos() {
                           <Button
                             variant="danger"
                             size="sm"
-                            onClick={() => handleShow("Eliminar", mantenimiento)}
+                            onClick={() =>
+                              handleShow("Eliminar", mantenimiento)
+                            }
                           >
                             Eliminar
                           </Button>
@@ -355,92 +363,87 @@ export default function HomeMantenimientos() {
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
-        backdrop="static"
-        keyboard={false}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>{modo} Mantenimiento</Modal.Title>
+          <Modal.Title>
+            {modo === "Agregar"
+              ? "Agregar Mantenimiento"
+              : "Editar Mantenimiento"}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {modo !== "Eliminar" ? (
-            <Form>
-              <Form.Group>
-                <Form.Label>ID</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mantenimientoseleccionado.id_equipo}
-                  onChange={handleIdChange}
-                  placeholder="Ingresar ID"
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Tipo</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mantenimientoseleccionado.equipo_descripcion}
-                  disabled
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Numero de Serie</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mantenimientoseleccionado.numero_serie}
-                  disabled
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Descripción</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={mantenimientoseleccionado.descripcion}
-                  onChange={(e) =>
-                    setMantenimientoSeleccionado({
-                      ...mantenimientoseleccionado,
-                      descripcion: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Fecha de Entrada</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={mantenimientoseleccionado.fecha_entrada}
-                  onChange={(e) =>
-                    setMantenimientoSeleccionado({
-                      ...mantenimientoseleccionado,
-                      fecha_entrada: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>Fecha de Salida</Form.Label>
-                <Form.Control
-                  type="date"
-                  value={mantenimientoseleccionado.fecha_salida}
-                  onChange={(e) =>
-                    setMantenimientoSeleccionado({
-                      ...mantenimientoseleccionado,
-                      fecha_salida: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-            </Form>
-          ) : (
-            <div>
-              <h4>¿Seguro que deseas eliminar este mantenimiento?</h4>
-            </div>
-          )}
+          <Form>
+            <Form.Group controlId="equipo">
+              <Form.Label>Equipo</Form.Label>
+              <Form.Control
+                as="select"
+                value={mantenimientoseleccionado.descripcion}
+                onChange={(e) => {
+                  handleIdChange(e.target.value)
+                  console.log("Seleccion");
+                }}
+              >
+                <option value="">Seleccione un equipo</option>
+                <option value="hola">Equipo 1</option>
+                {/* {equipos
+                  .filter((equipo) => equipo.estado === 1) // Filtramos solo los equipos activos
+                  .map((equipo) => (
+                    <option key={equipo.descripcion} value={equipo.descripcion}>
+                      {equipo.descripcion}
+                    </option>
+                  ))} */}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group controlId="descripcion">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control
+                type="text"
+                value={mantenimientoseleccionado.descripcion}
+                onChange={(e) =>
+                  setMantenimientoSeleccionado({
+                    ...mantenimientoseleccionado,
+                    descripcion: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Group controlId="fechaEntrada">
+              <Form.Label>Fecha de Entrada</Form.Label>
+              <Form.Control
+                type="date"
+                value={mantenimientoseleccionado.fecha_entrada}
+                onChange={(e) =>
+                  setMantenimientoSeleccionado({
+                    ...mantenimientoseleccionado,
+                    fecha_entrada: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+            <Form.Group controlId="fechaSalida">
+              <Form.Label>Fecha de Salida</Form.Label>
+              <Form.Control
+                type="date"
+                value={mantenimientoseleccionado.fecha_salida}
+                onChange={(e) =>
+                  setMantenimientoSeleccionado({
+                    ...mantenimientoseleccionado,
+                    fecha_salida: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cancelar
+            Cerrar
           </Button>
           <Button variant="primary" onClick={handleSave}>
-            {modo === "Eliminar" ? "Eliminar" : "Guardar"}
+            {modo === "Agregar" ? "Agregar" : "Actualizar"}
           </Button>
         </Modal.Footer>
       </Modal>

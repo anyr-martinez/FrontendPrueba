@@ -8,7 +8,7 @@ import {
 //Usuarios
 import Login from '../Login/Login';
 import RegistrarUsuario from '../Login/RegistrarUsuario/RegistrarUsuario';
-import AcualizarContrasena from '../Login/ActualizarContrasena/ActualizarContrasena';
+//import AcualizarContrasena from '../Login/ActualizarContrasena/ActualizarContrasena';
 import { AutenticacionRoute } from "./AutenticacionRoute";
 import Home from '../Login/Menu/Home';
 
@@ -18,7 +18,7 @@ import ListarEquipos from "../Plantilla/PlantillaEquipos/Home";
 import GuardarEquipo from '../Plantilla/PlantillaEquipos/Home';
 import EliminarEquipo from "../Plantilla/PlantillaEquipos/Home";
 import ActualizarEquipo from "../Plantilla/PlantillaEquipos/Home";
-import ObtenerEquipoById  from "../Plantilla/PlantillaMantenimientos/Home";
+import ObtenerEquipoById  from "../Plantilla/PlantillaEquipos/Home";
 
 //Mantenimientos 
 import HomeMantenimientos from '../Plantilla/PlantillaMantenimientos/Home';
@@ -37,8 +37,7 @@ export const routes = createBrowserRouter(
       <Route path="/" element={<Login />} />
       <Route path="/Home" element={<Home />} />
       <Route path="/registro-usuario" element={<RegistrarUsuario />} />
-      <Route path="/actualizar-contrasena" element={<AcualizarContrasena />} />
-     
+           
       {/* Rutas protegidas */}
       <Route element={<AutenticacionRoute />}>
         <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>
@@ -47,16 +46,16 @@ export const routes = createBrowserRouter(
           <Route path="guardar" element={<GuardarEquipo />} />
           <Route path="eliminar" element={<EliminarEquipo />} />
           <Route path="actualizar" element={<ActualizarEquipo />} />
-          <Route path="obtener" element={<ObtenerEquipoById />} />
+          <Route path="obtenerM" element={<ObtenerEquipoById />} />
         </Route>
         
         <Route path="/dashboard-maintenances" element={<MaintenancesLayout />}>
           <Route index element={<HomeMantenimientos />} />
-          <Route path="listar" element={<ListarMantenimientos />} />
-          <Route path="guardar" element={<GuardarMantenimiento />} />
-          <Route path="eliminar" element={<EliminarMantenimiento />} />
-          <Route path="actualizar" element={<ActualizarMantenimiento />} />
-          <Route path="obtener" element={<ObtenerEquipoById />} />
+          <Route path="listarM" element={<ListarMantenimientos />} />
+          <Route path="guardarM" element={<GuardarMantenimiento />} />
+          <Route path="eliminarM" element={<EliminarMantenimiento />} />
+          <Route path="actualizarM" element={<ActualizarMantenimiento />} />
+          
         </Route>
       </Route>
     </Route>
