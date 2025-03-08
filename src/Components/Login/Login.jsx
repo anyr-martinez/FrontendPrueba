@@ -59,6 +59,8 @@ const Login = () => {
         setStoredUser({ usuario, token });
         console.log("Token guardado:", token);
 
+        
+
         // Redirigir al menú principal (dashboard)
         navigate("/Home", { state: { userId: usuario.id } });
 

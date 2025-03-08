@@ -21,7 +21,6 @@ export default function HomeMantenimientos() {
   const [modo, setModo] = useState("Agregar");
   const [equipos, setEquipos] = useState([]);
   const [mantenimientoseleccionado, setMantenimientoSeleccionado] = useState({
-    id_mantenimiento: "",
     id_equipo: "",
     equipo_descripcion: "",
     numero_serie: "",
@@ -37,12 +36,13 @@ export default function HomeMantenimientos() {
 
   useEffect(() => {
     obtenerMantenimientos();
-    obtenerEquipos(); // Obtén los equipos cuando se carga el componente
+    obtenerEquipos(); 
   }, []);
 
   const obtenerMantenimientos = async () => {
     try {
       const respuesta = await AxiosPublico.get(ListarMantenimientos);
+      
       setMantenimientos(respuesta.data.data);
     } catch (error) {
       console.error(
@@ -83,7 +83,7 @@ export default function HomeMantenimientos() {
     try {
       if (!user || !user.token) {
         console.log("No token disponible, redirigiendo al login");
-        window.location.href = "/home"; // Redirigir al home si no hay token
+        window.location.href = "/home"; 
         return;
       }
       let response;
@@ -186,7 +186,9 @@ export default function HomeMantenimientos() {
   };
 
   const filteredMantenimientos = mantenimientos.filter((mantenimiento) => {
+    
     return (
+      mantenimiento.estado === 1 &&
       (filtros.id === "" ||
         mantenimiento.id_mantenimiento.toString().includes(filtros.id)) &&
       (filtros.fecha_entrada === "" ||
@@ -200,10 +202,11 @@ export default function HomeMantenimientos() {
     if (!id) return; // Si no hay ID, no hacer nada
 
     try {
-      const equipoSeleccionado = equipos.find((equipo) => equipo.id === id);
+      const equipoSeleccionado = equipos.find((equipo) => equipo.id_equipo === Number(id));
       if (equipoSeleccionado) {
         setMantenimientoSeleccionado({
           ...mantenimientoseleccionado,
+          id_equipo: equipoSeleccionado.id_equipo,
           equipo_descripcion: equipoSeleccionado.descripcion,
           numero_serie: equipoSeleccionado.numero_serie,
         });
@@ -318,7 +321,6 @@ export default function HomeMantenimientos() {
                         className="align-middle"
                       >
                         <td>{mantenimiento.id_mantenimiento}</td>
-                        <td>{mantenimiento.id_equipo}</td>
                         <td>{mantenimiento.equipo_descripcion}</td>
                         <td>{mantenimiento.numero_serie}</td>
                         <td>{mantenimiento.descripcion}</td>
@@ -363,38 +365,35 @@ export default function HomeMantenimientos() {
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
+        size="static"
+        keyboard={false}
+        >
         <Modal.Header closeButton>
           <Modal.Title>
-            {modo === "Agregar"
-              ? "Agregar Mantenimiento"
-              : "Editar Mantenimiento"}
+            {modo} Mantenimientos
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {modo !== "Eliminar" ? (
           <Form>
             <Form.Group controlId="equipo">
               <Form.Label>Equipo</Form.Label>
               <Form.Control
                 as="select"
-                value={mantenimientoseleccionado.descripcion}
+                value={mantenimientoseleccionado.id_equipo}
                 onChange={(e) => {
                   handleIdChange(e.target.value)
                   console.log("Seleccion");
                 }}
               >
                 <option value="">Seleccione un equipo</option>
-                <option value="hola">Equipo 1</option>
-                {/* {equipos
+                {equipos
                   .filter((equipo) => equipo.estado === 1) // Filtramos solo los equipos activos
                   .map((equipo) => (
-                    <option key={equipo.descripcion} value={equipo.descripcion}>
+                    <option key={equipo.descripcion} value={equipo.id_equipo}>
                       {equipo.descripcion}
                     </option>
-                  ))} */}
+                  ))} 
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="descripcion">
@@ -437,13 +436,19 @@ export default function HomeMantenimientos() {
               />
             </Form.Group>
           </Form>
+          ) : (
+            <p>¿Estás seguro de que quieres eliminar este equipo?</p>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cerrar
           </Button>
-          <Button variant="primary" onClick={handleSave}>
-            {modo === "Agregar" ? "Agregar" : "Actualizar"}
+          <Button 
+            variant={modo === "Eliminar" ? "danger" : "primary"}
+            onClick={handleSave}
+          >
+            {modo === "Eliminar" ? "Eliminar" : "Guardar"}
           </Button>
         </Modal.Footer>
       </Modal>

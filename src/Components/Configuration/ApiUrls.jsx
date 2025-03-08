@@ -19,5 +19,5 @@ export const EliminarEquipo = '/api/equipment/deleteEquipment';
 export const GuardarMantenimiento = '/api/maintenance/create';
 export const ListarMantenimientos = '/api/maintenance/maintenances';
 export const ObtenerMantenimientoById = '/api/maintenance/maintenance/{id}';
-export const ActualizarMantenimiento = '/api/maintenance/updateMaintenance/{id}';
-export const EliminarMantenimiento = '/api/maintenance/deleteMaintenance/{id_mantenimiento}';
+export const ActualizarMantenimiento = '/api/maintenance/updateMaintenance';
+export const EliminarMantenimiento = '/api/maintenance/deleteMaintenance';

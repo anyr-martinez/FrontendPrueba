@@ -73,7 +73,7 @@ const SideNav = () => {
             <MenuItem
               path="/dashboard-maintenances"
               icon="fas fa-wrench"
-              label="Mantenimiento de Equipos"
+              label="Gestión de Mantenimientos"
               isActive={isActive}
             />
             
@@ -87,14 +87,14 @@ const SideNav = () => {
           onClick={handleLogout}
           className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2"
           style={{
-            backgroundColor: "#007236",
-            color: "#F0F0E6",
+            backgroundColor: "#F0F0E6",
+            color: "#bd2307",
             transition: "all 0.3s ease",
             fontWeight: "bold",
             borderRadius: "5px",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(0, 200, 83, 0.7)")}
-          onMouseLeave={(e) => (e.target.style.background = "#007236")}
+          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Salir</span>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
   ListarEquipos,
   GuardarEquipo,
@@ -168,7 +170,6 @@ export default function HomeEquipo() {
       (filtros.tipo === "" || equipo.tipo === filtros.tipo) &&
       (filtros.fecha_registro === "" ||
         equipo.fecha_registro === filtros.fecha_registro)
-        
     );
   });
 
@@ -206,7 +207,10 @@ export default function HomeEquipo() {
             </Button>
 
             {/* Filtros */}
-            <div className="row" style={{ marginLeft: "10%", marginRight: "auto" }}>
+            <div
+              className="row"
+              style={{ marginLeft: "10%", marginRight: "auto" }}
+            >
               <div className="col-md-3">
                 <input
                   type="text"
@@ -280,20 +284,18 @@ export default function HomeEquipo() {
                           {new Date(equipo.fecha_registro).toLocaleDateString()}
                         </td>
                         <td>
-                          <Button
-                            variant="warning"
-                            size="sm"
+                          <button
+                            className="btn btn-warning btn-sm me-2"
                             onClick={() => handleShow("Editar", equipo)}
                           >
-                            Editar
-                          </Button>{" "}
-                          <Button
-                            variant="danger"
-                            size="sm"
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
                             onClick={() => handleShow("Eliminar", equipo)}
                           >
-                            Eliminar
-                          </Button>
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
                         </td>
                       </tr>
                     ))}
