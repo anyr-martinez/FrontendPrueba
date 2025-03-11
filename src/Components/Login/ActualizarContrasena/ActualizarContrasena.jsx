@@ -1,99 +1,87 @@
-/*import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate, Link} from "react-router-dom";
 import fondo from "../../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
+import {
+  mostrarAlertaError,
+  mostrarAlertaOK,
+} from "../../SweetAlert/SweetAlert";
 import { AxiosPublico } from "../../Axios/Axios";
-import { mostrarAlertaOK, mostrarAlertaError } from "../../SweetAlert/SweetAlert";
-import zxcvbn from "zxcvbn";
-import { ActualizarContrasena } from "../../Configuration/ApiUrls";
+import { UsuarioActualizarContrasena } from "../../Configuration/ApiUrls";
 
-const UpdatePassword = () => {
-  const { id } = useParams(); // Obtener el id del usuario desde los parámetros de la URL
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+const ActualizarContrasena = () => {
+  const { usuario } = useParams();
   const navigate = useNavigate();
+  const [nuevaContrasena, setNuevaContrasena] = useState("");
+  const [confirmarContrasena, setConfirmarContrasena] = useState("");
 
-  // Controlar la fuerza de la contraseña
-  const handlePasswordChange = (e) => {
-    const password = e.target.value;
-    setNewPassword(password);
-    const strength = zxcvbn(password).score;
-    setPasswordStrength(strength);
+  const validarContrasena = () => {
+    if (nuevaContrasena.length < 6) {
+      mostrarAlertaError("La contraseña debe tener al menos 6 caracteres.");
+      return false;
+    }
+    if (nuevaContrasena !== confirmarContrasena) {
+      mostrarAlertaError("Las contraseñas no coinciden.");
+      return false;
+    }
+    return true;
   };
 
-  // Enviar la solicitud para actualizar la contraseña
-  const handleUpdatePassword = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-      mostrarAlertaError("Las contraseñas no coinciden. Por favor, inténtelo de nuevo.", "error");
-      return;
-    }
-
-    if (!newPassword || !confirmPassword) {
-      mostrarAlertaError("Por favor complete todos los campos.", "error");
-      return;
-    }
+    if (!validarContrasena()) return;
 
     try {
-      // Usamos la URL con el id del usuario
-      const response = await AxiosPublico.put(ActualizarContrasena(id), {
-        newPass: newPassword,
+      const response = await AxiosPublico.put(UsuarioActualizarContrasena, {
+        usuario,
+        nuevaContrasena,
       });
 
-      mostrarAlertaOK("Contraseña actualizada correctamente.", "success");
-      console.log("Password updated:", response.data);
-      navigate("/");
-    } catch (error) {
-      if (error.response) {
-        setError(error.response.data.message || "Error al actualizar la contraseña.");
-        mostrarAlertaError("Error al actualizar la contraseña. Por favor, inténtelo de nuevo.", "error");
-        console.error("Password update failed:", error.response.data);
-      } else if (error.request) {
-        setError("No se recibió respuesta del servidor.");
-        mostrarAlertaError("No se recibió respuesta del servidor. Por favor, inténtelo de nuevo.", "error");
-        console.error("No response received:", error.request);
+      if (response.status === 200) {
+        mostrarAlertaOK("Contraseña actualizada correctamente.");
+        navigate("/");
       } else {
-        setError("Error al enviar la solicitud.");
-        mostrarAlertaError("Error al enviar la solicitud. Por favor, inténtelo de nuevo.", "error");
-        console.error("Error in request setup:", error.message);
+        mostrarAlertaError("Error al actualizar la contraseña.");
       }
+    } catch (error) {
+      console.error("Error al actualizar la contraseña:", error);
+      mostrarAlertaError("Error en la conexión con el servidor.");
     }
   };
 
   return (
     <div
-      className="recuperar-contrasena-container d-flex align-items-center justify-content-center"
+      className="d-flex align-items-center justify-content-center bg-light"
       style={{
         backgroundImage: `url(${fondo})`,
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         backgroundPosition: "center",
         height: "100vh",
+        width: "100vw",
       }}
     >
       <div
-        className="recuperar-contrasena-box p-4 rounded shadow"
+        className="p-4 rounded shadow"
         style={{
           maxWidth: "400px",
           width: "100%",
-          backgroundColor: "rgba(255, 255, 255, 0.75)",
+          backgroundColor: "rgba(255, 255, 255, 0.85)",
         }}
       >
         <h2 className="text-center mb-4">Actualizar Contraseña</h2>
-        {error && <p className="text-danger text-center">{error}</p>}
-        <form onSubmit={handleUpdatePassword}>
+        <p className="text-center">Usuario: <strong>{usuario}</strong></p>
+
+        <form onSubmit={handleSubmit}>
           <div className="form-group position-relative">
             <input
-              type={showPassword ? "text" : "password"}
+              type="password"
               className="form-control"
               placeholder="Nueva Contraseña"
-              value={newPassword}
-              onChange={handlePasswordChange}
-              autoComplete="new-password"
+              value={nuevaContrasena}
+              onChange={(e) => setNuevaContrasena(e.target.value)}
+              required
             />
             <span
               className="position-absolute"
@@ -101,50 +89,20 @@ const UpdatePassword = () => {
                 top: "50%",
                 right: "10px",
                 transform: "translateY(-50%)",
-                cursor: "pointer",
               }}
-              onClick={() => setShowPassword(!showPassword)}
             >
-              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              <FontAwesomeIcon icon={faLock} />
             </span>
           </div>
 
-          {newPassword && (
-            <div className="form-group">
-              <div className="progress">
-                <div
-                  className={`progress-bar ${
-                    passwordStrength < 2
-                      ? "bg-danger"
-                      : passwordStrength < 4
-                      ? "bg-warning"
-                      : "bg-success"
-                  }`}
-                  role="progressbar"
-                  style={{ width: `${(passwordStrength + 1) * 20}%` }}
-                  aria-valuenow={(passwordStrength + 1) * 20}
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                ></div>
-              </div>
-              <small className="form-text text-muted">
-                {passwordStrength < 2
-                  ? "Contraseña débil"
-                  : passwordStrength < 4
-                  ? "Contraseña aceptable"
-                  : "Contraseña fuerte"}
-              </small>
-            </div>
-          )}
-
-          <div className="form-group position-relative">
+          <div className="form-group position-relative mt-3">
             <input
-              type={showPassword ? "text" : "password"}
+              type="password"
               className="form-control"
               placeholder="Confirmar Contraseña"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              autoComplete="new-password"
+              value={confirmarContrasena}
+              onChange={(e) => setConfirmarContrasena(e.target.value)}
+              required
             />
             <span
               className="position-absolute"
@@ -152,34 +110,25 @@ const UpdatePassword = () => {
                 top: "50%",
                 right: "10px",
                 transform: "translateY(-50%)",
-                cursor: "pointer",
               }}
-              onClick={() => setShowPassword(!showPassword)}
             >
-              <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              <FontAwesomeIcon icon={faLock} />
             </span>
           </div>
 
-          <div className="text-center">
-            <button type="submit" className="btn btn-primary mb-2" style={{ width: "300px" }}>
-              Actualizar Contraseña
-            </button>
+          <button type="submit" className="btn btn-primary btn-block mt-3">
+            Actualizar
+          </button>
+
+          <div className="text-center my-3">
+            <Link to="/" className="text-primary">
+              Volver al inicio de sesión
+            </Link>
           </div>
         </form>
-
-        <div className="text-center mt-2">
-          <button
-            className="btn btn-secondary mt-2"
-            style={{ width: "300px" }}
-           // onClick={() => navigate("/")}
-          >
-            Regresar al Login
-          </button>
-        </div>
       </div>
     </div>
   );
 };
 
-export default UpdatePassword;
-*/
+export default ActualizarContrasena;

@@ -5,12 +5,20 @@ import {
   Route,
 } from "react-router-dom";
 
-//Usuarios
+//Otras
 import Login from '../Login/Login';
 import RegistrarUsuario from '../Login/RegistrarUsuario/RegistrarUsuario';
-//import AcualizarContrasena from '../Login/ActualizarContrasena/ActualizarContrasena';
+import ActualizarContrasena from '../Login/ActualizarContrasena/ActualizarContrasena';
+import SolicitarCambio from "../Login/ActualizarContrasena/SolicitudCambio/SolicitudCambio";
 import { AutenticacionRoute } from "./AutenticacionRoute";
+
+//Usuarios
+import HomeUsuarios from '../Plantilla/PlantillaUsuarios/Home';
+import  ListarUsuarios from "../Plantilla/PlantillaUsuarios/Home";
+
+//Menu
 import Home from '../Login/Menu/Home';
+import HomeAdmin from '../Login/MenuAdmin/Home';
 
 //Equipos
 import HomeEquipos from '../Plantilla/PlantillaEquipos/Home';
@@ -30,13 +38,17 @@ import ActualizarMantenimiento from "../Plantilla/PlantillaMantenimientos/Home";
 // Importa Layout
 import { EquipmentsLayout } from '../Routes/EquimentsLayout';
 import { MaintenancesLayout } from '../Routes/MaintenancesLayout';
+import { UsersLayout } from "./UsersLayout";
 
 export const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/" element={<Login />} />
       <Route path="/Home" element={<Home />} />
+      <Route path="/HomeAdmin" element={<HomeAdmin />}/>
       <Route path="/registro-usuario" element={<RegistrarUsuario />} />
+      <Route path="/solicitud-cambio" element={<SolicitarCambio />} />
+      <Route path="/actualizar-contrasena/:usuario" element={<ActualizarContrasena />} />
            
       {/* Rutas protegidas */}
       <Route element={<AutenticacionRoute />}>
@@ -54,7 +66,13 @@ export const routes = createBrowserRouter(
           <Route path="listarM" element={<ListarMantenimientos />} />
           <Route path="guardarM" element={<GuardarMantenimiento />} />
           <Route path="eliminarM" element={<EliminarMantenimiento />} />
-          <Route path="actualizarM" element={<ActualizarMantenimiento />} />
+          <Route path="actualizarM" element={<ActualizarMantenimiento />} />         
+        </Route>
+
+        <Route path="/dashboard-users" element={<UsersLayout />}>
+          <Route index element={<HomeUsuarios />} />
+          <Route path="listarU" element={<ListarUsuarios />}/>
+        
           
         </Route>
       </Route>

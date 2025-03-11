@@ -3,20 +3,19 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { mostrarAlertaPregunta } from "../../SweetAlert/SweetAlert";
 import logo2 from "../../../assets/images/logo2.jpg";
 
-const Aside = () => {
+const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = (e) => {
-    localStorage.removeItem("token"); // Elimina el token o datos de sesión
     e.preventDefault();
     mostrarAlertaPregunta(
       (confirmed) => {
         if (confirmed) {
-          navigate("/"); // Redirige al inicio si se confirma
+          navigate("/Home"); // Redirige al inicio si se confirma
         }
       },
-      "¿Está seguro que desea Cerrar Sesión?",
+      "¿Está seguro que desea regresar al Menú?",
       "question"
     );
   };
@@ -67,20 +66,14 @@ const Aside = () => {
           <ul className="nav nav-pills nav-sidebar flex-column">
             <MenuItem
               path="/dashboard-equipments"
-              icon="fas fa-desktop"
-              label="Gestion de Equipos"
+              icon="fas fa-laptop"
+              label="Gestión de Equipos"
               isActive={isActive}
             />
             <MenuItem
               path="/dashboard-maintenances"
-              icon="fas fa-tools"
-              label="Gestion de Mantenimientos"
-              isActive={isActive}
-            />
-            <MenuItem
-              path="/configuration"
-              icon="fas fa-cogs"
-              label="Configuración"
+              icon="fas fa-wrench"
+              label="Gestión de Mantenimientos"
               isActive={isActive}
             />
             
@@ -89,22 +82,22 @@ const Aside = () => {
       </div>
 
       {/* Footer con botón de salir */}
-      <div className="sidebar-footer p-3 border-top mt-auto text-center"  >
+      <div className="sidebar-footer p-3 border-top mt-auto text-center">
         <button
           onClick={handleLogout}
           className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2"
           style={{
-            backgroundColor: "#f11511",
-            color: "#ffffff",
+            backgroundColor: "#F0F0E6",
+            color: "#bd2307",
             transition: "all 0.3s ease",
             fontWeight: "bold",
             borderRadius: "5px",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(201, 26, 26, 0.7)")}
-          onMouseLeave={(e) => (e.target.style.background = "#f11511")}
+          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
-          <span>Cerrar Sesión</span>
+          <span>Salir</span>
         </button>
       </div>
     </aside>
@@ -124,4 +117,4 @@ const MenuItem = ({ path, icon, label, isActive }) => (
   </li>
 );
 
-export default Aside;
+export default SideNav;

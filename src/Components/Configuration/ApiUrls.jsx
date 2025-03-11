@@ -3,10 +3,12 @@ export const Servidor = 'http://localhost:3000';
 
 // Usuario endpoints
 export const UsuarioIniciarSesion = '/api/users/login';
-export const ActualizarContrasena = `/api/users/updatePassword/{id}`;
+export const UsuarioActualizarContrasena = `/api/users/updatePassword`;
 export const ListarUsuarios = '/api/users/user';
-export const ActualizarUsuario = '/api/users/updateUser/{id}';
+export const ActualizarUsuario = '/api/users/updateUser';
 export const CrearUsuario = '/api/users/register';
+//export const UsuarioName =  `/api/users/users`;
+export const EliminarUsuario = '/api/users/deleteUser';
 
 // Equipos endpoints
 export const GuardarEquipo = '/api/equipment/create';

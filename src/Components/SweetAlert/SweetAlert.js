@@ -28,7 +28,7 @@ export function mostrarAlertaOK(mensaje, icono = "success", foco = "") {
         icon: icono,
         confirmButtonText: 'Aceptar',
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1400,
     });
     enfocarCampo(foco);
 }
@@ -53,7 +53,7 @@ export function mostrarAlertaError(mensaje, foco = "") {
         icon: 'error',
         confirmButtonText: 'Aceptar',
         showConfirmButton: false,
-        timer: 3000
+        timer: 2500
     });
     enfocarCampo(foco);
 }

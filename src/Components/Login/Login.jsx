@@ -24,46 +24,46 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (!usuario || !contrasena) {
       mostrarAlerta("Por favor, complete todos los campos.", "warning");
       return;
     }
-
+  
     if (checkSpecialLogin(usuario, contrasena)) {
       return;
     }
-
+  
     try {
       const response = await AxiosPublico.post(UsuarioIniciarSesion, {
         usuario: usuario,
         contrasena: contrasena,
       });
-      //console.log(response);
-
+  
       if (response?.data.data && response.data.data.token) {
-        const { token, usuario, nombre, id } = response.data.data;
-
+        const { token, usuario, nombre, id, rol } = response.data.data;
+  
         // Guardar sesión
         setLogin({
           usuario: {
             usuario: usuario,
             nombre: nombre,
             id: id,
+            rol: rol,  // Guardamos el rol aquí
           },
           token: token,
         });
-        console.log("Usuario guradado en el contexto:", usuario);
-
+  
         // Guardar en sessionStorage
         setStoredUser({ usuario, token });
-        console.log("Token guardado:", token);
-
-        
-
-        // Redirigir al menú principal (dashboard)
-        navigate("/Home", { state: { userId: usuario.id } });
-
+  
+        // Redirigir según el rol del usuario
+        if (rol === "admin") {
+          navigate("/HomeAdmin");  // Página de admin
+        } else {
+          navigate("/home");  // Página de usuario
+        }
+  
         mostrarAlertaOK("Inicio de sesión exitoso", "success");
       } else {
         mostrarAlertaError("Error en el inicio de sesión. Inténtelo de nuevo.");
@@ -73,7 +73,7 @@ const Login = () => {
       mostrarAlertaError("Usuario o contraseña incorrectos.");
     }
   };
-
+  
   return (
     <div
       className="d-flex align-items-center justify-content-center bg-light"
@@ -145,7 +145,7 @@ const Login = () => {
 
          {/* Olvidar Contrasena */}
           <div className="text-center my-3">
-            <Link to="/actualizar-contrasena" className="text-primary">
+            <Link to="/solicitud-cambio" className="text-primary">
               ¿Olvidaste tu contraseña?
             </Link>
           </div>
