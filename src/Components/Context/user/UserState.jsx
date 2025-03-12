@@ -101,10 +101,10 @@ const UserState = (props) => {
   };
 
   // Función para actualizar la contraseña de un usuario
-  const actualizarContrasena = async (id_usuario, nuevaContrasena) => {
+  const actualizarContrasena = async (id, nuevaContrasena) => {
     try {
       const response = await AxiosPrivado.put(
-        `${UsuarioActualizarContrasena}/${id_usuario}`,
+        `${UsuarioActualizarContrasena}/${id}`,
         { contrasena: nuevaContrasena },
         {
           headers: {

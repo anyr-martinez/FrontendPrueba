@@ -20,7 +20,7 @@ export default function Content() {
               
             }}
           >
-            BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO DE EQUIPOS TI 
+            BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO TI 
           </h1>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function Content() {
 
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Equipos</h3>
-                    <p className="mb-0">Gestionar Equipos</p>
+                    <p className="mb-0">Gestión De Equipos</p>
                   </div>
                   <div className="icon position-absolute end-0 top-0 p-3 opacity-25 fs-1">
                     <i className="fas fa-desktop"></i>
@@ -66,7 +66,7 @@ export default function Content() {
                 >
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Mantenimientos</h3>
-                    <p className="mb-0">Gestionar Mantenimientos</p>
+                    <p className="mb-0">Gestión De Mantenimientos</p>
                   </div>
                   <div className="icon position-absolute end-0 top-0 p-3 opacity-25 fs-1">
                     <i className="fas fa-tools"></i>

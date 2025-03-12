@@ -26,7 +26,7 @@ const Aside = () => {
       ? "active bg-white text-dark shadow-lg rounded"
       : "text-black";
   };
-  
+
   return (
     <aside
       className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column"
@@ -58,7 +58,9 @@ const Aside = () => {
             borderRadius: "50%",
           }}
         />
-        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236"}}>Cooperativa Taulabé</p>
+        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236" }}>
+          Cooperativa Taulabé
+        </p>
       </div>
 
       {/* Menú */}
@@ -68,40 +70,34 @@ const Aside = () => {
             <MenuItem
               path="/dashboard-equipments"
               icon="fas fa-desktop"
-              label="Gestion de Equipos"
+              label="Gestión de Equipos"
               isActive={isActive}
             />
             <MenuItem
               path="/dashboard-maintenances"
               icon="fas fa-tools"
-              label="Gestion de Mantenimientos"
+              label="Gestión de Mantenimientos"
               isActive={isActive}
             />
-            <MenuItem
-              path="/configuration"
-              icon="fas fa-cogs"
-              label="Configuración"
-              isActive={isActive}
-            />
-            
           </ul>
         </nav>
       </div>
 
       {/* Footer con botón de salir */}
-      <div className="sidebar-footer p-3 border-top mt-auto text-center"  >
+      <div className="sidebar-footer p-3 border-top mt-auto text-center">
         <button
           onClick={handleLogout}
           className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2"
           style={{
-            backgroundColor: "#f11511",
-            color: "#ffffff",
+            backgroundColor: "#F0F0E6",
+            color: "#bd2307",
             transition: "all 0.3s ease",
-            fontWeight: "bold",
-            borderRadius: "5px",
+            fontWeight: "900",
+            borderRadius: "9px",
+            
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(201, 26, 26, 0.7)")}
-          onMouseLeave={(e) => (e.target.style.background = "#f11511")}
+          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Cerrar Sesión</span>
@@ -116,10 +112,14 @@ const MenuItem = ({ path, icon, label, isActive }) => (
   <li className="nav-item">
     <Link
       to={path}
-      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(path)}`}
+      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(
+        path
+      )}`}
     >
-      <i className={`nav-icon ${icon} me-2`} style={{color: "#ffffff"}}></i>
-      <p className="m-0" style={{color: "#ffffff"}}>{label}</p>
+      <i className={`nav-icon ${icon} me-2`} style={{ color: "#ffffff" }}></i>
+      <p className="m-0" style={{ color: "#ffffff" }}>
+        {label}
+      </p>
     </Link>
   </li>
 );

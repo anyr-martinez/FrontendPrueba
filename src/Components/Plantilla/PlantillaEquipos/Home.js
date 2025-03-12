@@ -189,7 +189,7 @@ export default function HomeEquipo() {
               marginTop: "1px",
             }}
           >
-            Gestión de Equipos de TI
+            Gestión de Equipos TI
           </h1>
         </div>
       </section>

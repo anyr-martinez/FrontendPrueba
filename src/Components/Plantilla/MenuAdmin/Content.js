@@ -20,7 +20,7 @@ const Content = () => {
               textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
             }}
           >
-            BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO DE EQUIPOS TI
+            BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO TI
           </h1>
         </div>
       </div>
@@ -36,7 +36,7 @@ const Content = () => {
                 <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#007236" }}>
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Equipos</h3>
-                    <p className="mb-0">Gestionar Equipos</p>
+                    <p className="mb-0">Gestión De Equipos</p>
                   </div>
                   <div className="icon position-absolute end-0 top-0 p-3 opacity-25 fs-1">
                     <i className="fas fa-desktop"></i>
@@ -51,7 +51,7 @@ const Content = () => {
                 <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#FF6600" }}>
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Mantenimientos</h3>
-                    <p className="mb-0">Gestionar Mantenimientos</p>
+                    <p className="mb-0">Gestión De Mantenimientos</p>
                   </div>
                   <div className="icon position-absolute end-0 top-0 p-3 opacity-25 fs-1">
                     <i className="fas fa-tools"></i>
@@ -66,10 +66,10 @@ const Content = () => {
                 <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#858885" }}>
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Usuarios</h3>
-                    <p className="mb-0">Gestionar Usuarios</p>
+                    <p className="mb-0">Gestión De Usuarios</p>
                   </div>
                   <div className="icon position-absolute end-0 top-0 p-3 opacity-25 fs-1">
-                    <i className="fas fa-user"></i>
+                    <i className="fas fa-users"></i>
                   </div>
                 </div>
               </Link>

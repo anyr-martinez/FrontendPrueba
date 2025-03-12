@@ -3,7 +3,6 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEdit,
   faTrash,
   faUnlockAlt,
   faUserEdit,
@@ -152,7 +151,10 @@ export default function HomeUsuarios() {
       } else if (modo === "Actualizar Contraseña") {
         response = await AxiosPrivado.put(
           `${UsuarioActualizarContrasena}/${usuarioseleccionado.id_usuario}`,
-          { contrasena: usuarioseleccionado.contrasena },
+          {
+            contrasena: usuarioseleccionado.contrasena,
+          
+          },
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -210,7 +212,7 @@ export default function HomeUsuarios() {
               marginTop: "1px",
             }}
           >
-            Gestión de Usuarios de TI
+            Gestión de Usuarios TI
           </h1>
         </div>
       </section>

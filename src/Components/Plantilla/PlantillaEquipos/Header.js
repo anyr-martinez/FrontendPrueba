@@ -27,7 +27,15 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/");
+    navigate("/"); 
+  };
+
+  const handleNavigateHome = () => {
+    if (usuario && usuario.rol === "admin") {
+      navigate("/HomeAdmin"); // Redirige a /HomeAdmin si es admin
+    } else {
+      navigate("/Home"); // Redirige a /Home si es usuario
+    }
   };
 
   return (
@@ -49,9 +57,10 @@ const Header = () => {
           </li>
           <li className="nav-item d-none d-sm-inline-block">
             <a
-              href="/"
+              href="#"
               className="nav-link"
               style={{ color: "#007236", fontWeight: "700" }}
+              onClick={handleNavigateHome}
             >
               Inicio
             </a>

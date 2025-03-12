@@ -12,7 +12,7 @@ const SideNav = () => {
     mostrarAlertaPregunta(
       (confirmed) => {
         if (confirmed) {
-          navigate("/Home"); // Redirige al inicio si se confirma
+          navigate("/HomeAdmin"); // Redirige al inicio si se confirma
         }
       },
       "¿Está seguro que desea regresar al Menú?",

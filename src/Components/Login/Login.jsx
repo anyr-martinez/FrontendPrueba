@@ -85,7 +85,7 @@ const Login = () => {
         width: "100vw",
       }}
     >
-      <div
+     <div
         className="p-4 rounded shadow"
         style={{
           maxWidth: "400px",
@@ -93,23 +93,23 @@ const Login = () => {
           backgroundColor: "rgba(255, 255, 255, 0.85)",
         }}
       >
-        <h2 className="text-center mb-4">Inicio de Sesión</h2>
+        <h2 className="text-center mb-4 text-dark fw-bold">Inicio de Sesión</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group position-relative">
             <input
               type="text"
-              className="form-control"
+              className="form-control rounded-pill px-4 py-2 border-0 shadow-sm"
               placeholder="Usuario"
               value={usuario}
               onChange={(e) => setUsuario(e.target.value)}
               autoComplete="username"
             />
             <span
-              className="position-absolute"
+              className="position-absolute text-muted"
               style={{
                 top: "50%",
-                right: "10px",
+                right: "15px",
                 transform: "translateY(-50%)",
               }}
             >
@@ -117,67 +117,36 @@ const Login = () => {
             </span>
           </div>
 
-          <div className="form-group position-relative">
+          <div className="form-group position-relative mt-3">
             <input
               type="password"
-              className="form-control"
-              placeholder="Password"
+              className="form-control rounded-pill px-4 py-2 border-0 shadow-sm"
+              placeholder="Contraseña"
               value={contrasena}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
             />
             <span
-              className="position-absolute"
+              className="position-absolute text-muted"
               style={{
                 top: "50%",
-                right: "10px",
+                right: "15px",
                 transform: "translateY(-50%)",
               }}
             >
               <FontAwesomeIcon icon={faLock} />
             </span>
           </div>
-
           {/*Iniciar sesion */}
-          <button type="submit" className="btn btn-primary btn-block">
+          <button type="submit" className="btn btn-primary w-100 rounded-pill py-2 fw-bold mt-3 shadow-sm">
             Iniciar sesión
           </button>
 
-         {/* Olvidar Contrasena */}
-          <div className="text-center my-3">
-            <Link to="/solicitud-cambio" className="text-primary">
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-
-          <div className="text-center my-3 position-relative">
-            <span className="text-muted">- OR -</span>
-            <hr
-              className="position-absolute"
-              style={{
-                top: "50%",
-                left: "0",
-                width: "40%",
-                transform: "translateY(-50%)",
-              }}
-            />
-            <hr
-              className="position-absolute"
-              style={{
-                top: "50%",
-                right: "0",
-                width: "40%",
-                transform: "translateY(-50%)",
-              }}
-            />
-          </div>
-          <Link to="/registro-usuario" className="btn btn-info btn-block">
-            Crear Cuenta
-          </Link>
-        </form>
+          </form>
       </div>
     </div>
   );
 };
+
 
 export default Login;

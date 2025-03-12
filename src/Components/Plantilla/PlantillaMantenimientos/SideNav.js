@@ -1,31 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { mostrarAlertaPregunta } from "../../SweetAlert/SweetAlert";
 import logo2 from "../../../assets/images/logo2.jpg";
+import { useContextUsuario } from "../../Context/user/UserContext"; // Importa el contexto
 
 const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { usuario } = useContextUsuario();
+  const [rol, setRol] = useState("");
+  
+  // Asigna el rol cuando el usuario cambia
+  useEffect(() => {
+    if (usuario) {
+      setRol(usuario.rol === "admin" ? "Administrador" : "Usuario");
+    }
+  }, [usuario]);
 
-  const handleLogout = (e) => {
-    e.preventDefault();
-    mostrarAlertaPregunta(
-      (confirmed) => {
-        if (confirmed) {
-          navigate("/Home"); // Redirige al inicio si se confirma
-        }
-      },
-      "¿Está seguro que desea regresar al Menú?",
-      "question"
-    );
+  // Maneja la salida
+  const handleLogout = () => {
+    if (usuario && usuario.rol === "admin") {
+      navigate("/HomeAdmin"); // Redirige a HomeAdmin si es admin
+    } else {
+      navigate("/Home"); // Redirige a Home si es usuario
+    }
   };
 
+  // Verifica si el ítem del menú está activo
   const isActive = (path) => {
     return location.pathname === path
       ? "active bg-white text-dark shadow-lg rounded"
       : "text-black";
   };
-  
+
   return (
     <aside
       className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column"
@@ -57,7 +63,9 @@ const SideNav = () => {
             borderRadius: "50%",
           }}
         />
-        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236"}}>Cooperativa Taulabé</p>
+        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236" }}>
+          Cooperativa Taulabé
+        </p>
       </div>
 
       {/* Menú */}
@@ -65,7 +73,7 @@ const SideNav = () => {
         <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
             <MenuItem
-              path="/reportes"
+              path="/dashboard-maintenances/reportes-mantenimientos"
               icon="fas fa-cogs"
               label="Gestión de Reportes"
               isActive={isActive}
@@ -73,10 +81,9 @@ const SideNav = () => {
             <MenuItem
               path="/dashboard-equipments"
               icon="fas fa-desktop"
-              label="Gestion de Equipos"
+              label="Gestión de Equipos"
               isActive={isActive}
             />
-            
           </ul>
         </nav>
       </div>
@@ -87,14 +94,14 @@ const SideNav = () => {
           onClick={handleLogout}
           className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2"
           style={{
-            backgroundColor: "#007236",
-            color: "#F0F0E6",
+            backgroundColor: "#F0F0E6",
+            color: "#bd2307",
             transition: "all 0.3s ease",
-            fontWeight: "bold",
-            borderRadius: "5px",
+            fontWeight: "900",
+            borderRadius: "10px",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(0, 200, 83, 0.7)")}
-          onMouseLeave={(e) => (e.target.style.background = "#007236")}
+          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Salir</span>
@@ -111,8 +118,8 @@ const MenuItem = ({ path, icon, label, isActive }) => (
       to={path}
       className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(path)}`}
     >
-      <i className={`nav-icon ${icon} me-2`} style={{color: "#ffffff"}}></i>
-      <p className="m-0" style={{color: "#ffffff"}}>{label}</p>
+      <i className={`nav-icon ${icon} me-2`} style={{ color: "#ffffff" }}></i>
+      <p className="m-0" style={{ color: "#ffffff" }}>{label}</p>
     </Link>
   </li>
 );

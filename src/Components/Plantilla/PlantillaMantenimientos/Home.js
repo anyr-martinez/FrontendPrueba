@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
   ListarMantenimientos,
   GuardarMantenimiento,
@@ -36,13 +38,13 @@ export default function HomeMantenimientos() {
 
   useEffect(() => {
     obtenerMantenimientos();
-    obtenerEquipos(); 
+    obtenerEquipos();
   }, []);
 
   const obtenerMantenimientos = async () => {
     try {
       const respuesta = await AxiosPublico.get(ListarMantenimientos);
-      
+
       setMantenimientos(respuesta.data.data);
     } catch (error) {
       console.error(
@@ -74,16 +76,30 @@ export default function HomeMantenimientos() {
     }
   ) => {
     console.log("Mantenimiento seleccionado para el modal:", mantenimiento);
+  
+    // Convertir las fechas al formato adecuado (yyyy-mm-dd)
+    const fechaEntrada = mantenimiento.fecha_entrada
+      ? new Date(mantenimiento.fecha_entrada).toISOString().split("T")[0]
+      : "";
+    const fechaSalida = mantenimiento.fecha_salida
+      ? new Date(mantenimiento.fecha_salida).toISOString().split("T")[0]
+      : "";
+  
     setModo(modo);
-    setMantenimientoSeleccionado(mantenimiento);
+    setMantenimientoSeleccionado({
+      ...mantenimiento,
+      fecha_entrada: fechaEntrada,
+      fecha_salida: fechaSalida,
+    });
     setShowModal(true);
   };
+  
 
   const handleSave = async () => {
     try {
       if (!user || !user.token) {
         console.log("No token disponible, redirigiendo al login");
-        window.location.href = "/home"; 
+        window.location.href = "/home";
         return;
       }
       let response;
@@ -186,7 +202,6 @@ export default function HomeMantenimientos() {
   };
 
   const filteredMantenimientos = mantenimientos.filter((mantenimiento) => {
-    
     return (
       mantenimiento.estado === 1 &&
       (filtros.id === "" ||
@@ -202,7 +217,9 @@ export default function HomeMantenimientos() {
     if (!id) return; // Si no hay ID, no hacer nada
 
     try {
-      const equipoSeleccionado = equipos.find((equipo) => equipo.id_equipo === Number(id));
+      const equipoSeleccionado = equipos.find(
+        (equipo) => equipo.id_equipo === Number(id)
+      );
       if (equipoSeleccionado) {
         setMantenimientoSeleccionado({
           ...mantenimientoseleccionado,
@@ -232,7 +249,7 @@ export default function HomeMantenimientos() {
               marginTop: "1px",
             }}
           >
-            Gestión de Mantenimientos de TI
+            Gestión de Mantenimientos TI
           </h1>
         </div>
       </section>
@@ -334,23 +351,19 @@ export default function HomeMantenimientos() {
                             mantenimiento.fecha_salida
                           ).toLocaleDateString()}
                         </td>
-                        <td className="d-flex justify-content-center align-items-center gap-2">
-                          <Button
-                            variant="warning"
-                            size="sm"
+                        <td>
+                          <button
+                            className="btn btn-warning btn-sm me-2"
                             onClick={() => handleShow("Editar", mantenimiento)}
                           >
-                            Editar
-                          </Button>{" "}
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() =>
-                              handleShow("Eliminar", mantenimiento)
-                            }
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleShow("Eliminar", mantenimiento)}
                           >
-                            Eliminar
-                          </Button>
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -367,75 +380,73 @@ export default function HomeMantenimientos() {
         onHide={() => setShowModal(false)}
         size="static"
         keyboard={false}
-        >
+      >
         <Modal.Header closeButton>
-          <Modal.Title>
-            {modo} Mantenimientos
-          </Modal.Title>
+          <Modal.Title>{modo} Mantenimientos</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {modo !== "Eliminar" ? (
-          <Form>
-            <Form.Group controlId="equipo">
-              <Form.Label>Equipo</Form.Label>
-              <Form.Control
-                as="select"
-                value={mantenimientoseleccionado.id_equipo}
-                onChange={(e) => {
-                  handleIdChange(e.target.value)
-                  console.log("Seleccion");
-                }}
-              >
-                <option value="">Seleccione un equipo</option>
-                {equipos
-                  .filter((equipo) => equipo.estado === 1) // Filtramos solo los equipos activos
-                  .map((equipo) => (
-                    <option key={equipo.descripcion} value={equipo.id_equipo}>
-                      {equipo.descripcion}
-                    </option>
-                  ))} 
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="descripcion">
-              <Form.Label>Descripción</Form.Label>
-              <Form.Control
-                type="text"
-                value={mantenimientoseleccionado.descripcion}
-                onChange={(e) =>
-                  setMantenimientoSeleccionado({
-                    ...mantenimientoseleccionado,
-                    descripcion: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-            <Form.Group controlId="fechaEntrada">
-              <Form.Label>Fecha de Entrada</Form.Label>
-              <Form.Control
-                type="date"
-                value={mantenimientoseleccionado.fecha_entrada}
-                onChange={(e) =>
-                  setMantenimientoSeleccionado({
-                    ...mantenimientoseleccionado,
-                    fecha_entrada: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-            <Form.Group controlId="fechaSalida">
-              <Form.Label>Fecha de Salida</Form.Label>
-              <Form.Control
-                type="date"
-                value={mantenimientoseleccionado.fecha_salida}
-                onChange={(e) =>
-                  setMantenimientoSeleccionado({
-                    ...mantenimientoseleccionado,
-                    fecha_salida: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-          </Form>
+            <Form>
+              <Form.Group controlId="equipo">
+                <Form.Label>Equipo</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={mantenimientoseleccionado.id_equipo}
+                  onChange={(e) => {
+                    handleIdChange(e.target.value);
+                    console.log("Seleccion");
+                  }}
+                >
+                  <option value="">Seleccione un equipo</option>
+                  {equipos
+                    .filter((equipo) => equipo.estado === 1) // Filtramos solo los equipos activos
+                    .map((equipo) => (
+                      <option key={equipo.descripcion} value={equipo.id_equipo}>
+                        {equipo.descripcion}
+                      </option>
+                    ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="descripcion">
+                <Form.Label>Descripción</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={mantenimientoseleccionado.descripcion}
+                  onChange={(e) =>
+                    setMantenimientoSeleccionado({
+                      ...mantenimientoseleccionado,
+                      descripcion: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+              <Form.Group controlId="fechaEntrada">
+                <Form.Label>Fecha de Entrada</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={mantenimientoseleccionado.fecha_entrada}
+                  onChange={(e) =>
+                    setMantenimientoSeleccionado({
+                      ...mantenimientoseleccionado,
+                      fecha_entrada: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+              <Form.Group controlId="fechaSalida">
+                <Form.Label>Fecha de Salida</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={mantenimientoseleccionado.fecha_salida}
+                  onChange={(e) =>
+                    setMantenimientoSeleccionado({
+                      ...mantenimientoseleccionado,
+                      fecha_salida: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+            </Form>
           ) : (
             <p>¿Estás seguro de que quieres eliminar este equipo?</p>
           )}
@@ -444,7 +455,7 @@ export default function HomeMantenimientos() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cerrar
           </Button>
-          <Button 
+          <Button
             variant={modo === "Eliminar" ? "danger" : "primary"}
             onClick={handleSave}
           >

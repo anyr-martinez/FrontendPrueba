@@ -8,13 +8,15 @@ import {
 //Otras
 import Login from '../Login/Login';
 import RegistrarUsuario from '../Login/RegistrarUsuario/RegistrarUsuario';
-import ActualizarContrasena from '../Login/ActualizarContrasena/ActualizarContrasena';
-import SolicitarCambio from "../Login/ActualizarContrasena/SolicitudCambio/SolicitudCambio";
 import { AutenticacionRoute } from "./AutenticacionRoute";
 
 //Usuarios
 import HomeUsuarios from '../Plantilla/PlantillaUsuarios/Home';
-import  ListarUsuarios from "../Plantilla/PlantillaUsuarios/Home";
+import ListarUsuarios from "../Plantilla/PlantillaUsuarios/Home";
+import CrearUsuario  from "../Plantilla/PlantillaUsuarios/Home";
+import ActualizarUsuario from "../Plantilla/PlantillaUsuarios/Home";
+import EliminarUsuario from "../Plantilla/PlantillaUsuarios/Home";
+import UsuarioActualizarContrasena from "../Plantilla/PlantillaUsuarios/Home";
 
 //Menu
 import Home from '../Login/Menu/Home';
@@ -47,8 +49,6 @@ export const routes = createBrowserRouter(
       <Route path="/Home" element={<Home />} />
       <Route path="/HomeAdmin" element={<HomeAdmin />}/>
       <Route path="/registro-usuario" element={<RegistrarUsuario />} />
-      <Route path="/solicitud-cambio" element={<SolicitarCambio />} />
-      <Route path="/actualizar-contrasena/:usuario" element={<ActualizarContrasena />} />
            
       {/* Rutas protegidas */}
       <Route element={<AutenticacionRoute />}>
@@ -72,6 +72,10 @@ export const routes = createBrowserRouter(
         <Route path="/dashboard-users" element={<UsersLayout />}>
           <Route index element={<HomeUsuarios />} />
           <Route path="listarU" element={<ListarUsuarios />}/>
+          <Route path="crearU" element={<CrearUsuario />}/>
+          <Route path="actualizarU" element={<ActualizarUsuario />}/>
+          <Route path="eliminarU" element={<EliminarUsuario />}/>
+          <Route path="actualizarContrasena" element={<UsuarioActualizarContrasena />}/>
         
           
         </Route>
