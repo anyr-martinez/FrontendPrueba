@@ -30,6 +30,7 @@ export default function HomeUsuarios() {
     nombre: "",
     usuario: "",
     contrasena: "",
+    nuevaContrasena: "",
     confirmarContrasena: "",
     rol: "",
   });
@@ -152,7 +153,7 @@ export default function HomeUsuarios() {
         response = await AxiosPrivado.put(
           `${UsuarioActualizarContrasena}/${usuarioseleccionado.id_usuario}`,
           {
-            contrasena: usuarioseleccionado.contrasena,
+            nuevaContrasena: usuarioseleccionado.nuevaContrasena,
           
           },
           {
