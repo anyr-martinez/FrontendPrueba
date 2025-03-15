@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"; // Importar Redirect
 
 
 const Content = () => {
-  
+
   return (
     <div className="content-wrapper" style={{ backgroundColor: "#F0F0E6" }}>
       {/* Content Header */}
@@ -63,7 +63,7 @@ const Content = () => {
             {/* Opción Usuarios */}
             <div className="col-12 col-sm-6 col-lg-4">
               <Link to="/dashboard-users" className="text-decoration-none">
-                <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#858885" }}>
+                <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#20B2AA" }}>
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Usuarios</h3>
                     <p className="mb-0">Gestión De Usuarios</p>

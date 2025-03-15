@@ -3,6 +3,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faLock,
   faTrash,
   faUnlockAlt,
   faUserEdit,
@@ -30,7 +31,6 @@ export default function HomeUsuarios() {
     nombre: "",
     usuario: "",
     contrasena: "",
-    nuevaContrasena: "",
     confirmarContrasena: "",
     rol: "",
   });
@@ -81,22 +81,24 @@ export default function HomeUsuarios() {
       }
 
       // Validación para Confirmar Contraseña
-      if (
-        usuarioseleccionado.contrasena !==
-        usuarioseleccionado.confirmarContrasena
-      ) {
-        mostrarAlertaError("Las contraseñas no coinciden.");
-        return;
+      if (modo === "Agregar" || modo === "Actualizar Contraseña") {
+        if (usuarioseleccionado.contrasena !== usuarioseleccionado.confirmarContrasena) {
+          mostrarAlertaError("Las contraseñas no coinciden.");
+          return;
+        }
       }
+      
 
       let response;
 
       if (modo === "Agregar") {
+        console.log(usuarioseleccionado);
         response = await AxiosPrivado.post(CrearUsuario, usuarioseleccionado, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         });
+
         setUsuarios((prevUsuarios) => [...prevUsuarios, response.data]);
         obtenerUsuarios();
         mostrarAlertaOK("Usuario Creado Exitosamente!");
@@ -134,7 +136,8 @@ export default function HomeUsuarios() {
             if (response.status === 200 || response.status === 201) {
               setUsuarios((prevUsuarios) =>
                 prevUsuarios.filter(
-                  (usuario) => usuario.id_usuario !== usuarioseleccionado.id_usuario
+                  (usuario) =>
+                    usuario.id_usuario !== usuarioseleccionado.id_usuario
                 )
               );
               obtenerUsuarios();
@@ -153,8 +156,7 @@ export default function HomeUsuarios() {
         response = await AxiosPrivado.put(
           `${UsuarioActualizarContrasena}/${usuarioseleccionado.id_usuario}`,
           {
-            nuevaContrasena: usuarioseleccionado.nuevaContrasena,
-          
+            contrasena: usuarioseleccionado.contrasena,
           },
           {
             headers: {
@@ -318,7 +320,7 @@ export default function HomeUsuarios() {
                               handleShow("Actualizar Contraseña", usuario)
                             }
                           >
-                            <FontAwesomeIcon icon={faUnlockAlt} />
+                            <FontAwesomeIcon icon={faLock} />
                           </button>
                         </div>
                       </td>
@@ -380,14 +382,13 @@ export default function HomeUsuarios() {
                   }
                   disabled={modo === "Actualizar Contraseña"}
                 >
+                  <option value="">Seleccione un Rol</option>
                   <option value="admin">Administrador</option>
                   <option value="usuario">Usuario</option>
-
-                  
                 </Form.Control>
               </Form.Group>
               {/* Campo de Contraseña en el modo Agregar */}
-              {(modo === "Agregar" || modo === "Actualizar Contraseña") && (
+              {(modo === "Agregar"  || modo === "Actualizar Contraseña" ) && (
                 <>
                   <Form.Group>
                     <Form.Label>Contraseña</Form.Label>
@@ -400,6 +401,7 @@ export default function HomeUsuarios() {
                           contrasena: e.target.value,
                         })
                       }
+                      autoComplete="new-password"
                     />
                   </Form.Group>
                   <Form.Group>
@@ -413,6 +415,7 @@ export default function HomeUsuarios() {
                           confirmarContrasena: e.target.value,
                         })
                       }
+                      autoComplete="new-password"
                     />
                   </Form.Group>
                 </>

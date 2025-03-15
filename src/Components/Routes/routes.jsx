@@ -52,6 +52,7 @@ export const routes = createBrowserRouter(
            
       {/* Rutas protegidas */}
       <Route element={<AutenticacionRoute />}>
+      {/* Rutas Equipos*/}
         <Route path="/dashboard-equipments" element={<EquipmentsLayout />}>
           <Route index element={<HomeEquipos />} />
           <Route path="listar" element={<ListarEquipos />} />
@@ -60,7 +61,8 @@ export const routes = createBrowserRouter(
           <Route path="actualizar" element={<ActualizarEquipo />} />
           <Route path="obtenerM" element={<ObtenerEquipoById />} />
         </Route>
-        
+
+        {/*Rutas Mantenimientos */}
         <Route path="/dashboard-maintenances" element={<MaintenancesLayout />}>
           <Route index element={<HomeMantenimientos />} />
           <Route path="listarM" element={<ListarMantenimientos />} />
@@ -69,15 +71,14 @@ export const routes = createBrowserRouter(
           <Route path="actualizarM" element={<ActualizarMantenimiento />} />         
         </Route>
 
+        {/* Rutas Usuarios */}
         <Route path="/dashboard-users" element={<UsersLayout />}>
           <Route index element={<HomeUsuarios />} />
           <Route path="listarU" element={<ListarUsuarios />}/>
           <Route path="crearU" element={<CrearUsuario />}/>
           <Route path="actualizarU" element={<ActualizarUsuario />}/>
           <Route path="eliminarU" element={<EliminarUsuario />}/>
-          <Route path="actualizarContrasena" element={<UsuarioActualizarContrasena />}/>
-        
-          
+          <Route path="actualizarContrasena" element={<UsuarioActualizarContrasena />}/>          
         </Route>
       </Route>
     </Route>

@@ -76,7 +76,7 @@ export default function HomeMantenimientos() {
     }
   ) => {
     console.log("Mantenimiento seleccionado para el modal:", mantenimiento);
-  
+
     // Convertir las fechas al formato adecuado (yyyy-mm-dd)
     const fechaEntrada = mantenimiento.fecha_entrada
       ? new Date(mantenimiento.fecha_entrada).toISOString().split("T")[0]
@@ -84,7 +84,7 @@ export default function HomeMantenimientos() {
     const fechaSalida = mantenimiento.fecha_salida
       ? new Date(mantenimiento.fecha_salida).toISOString().split("T")[0]
       : "";
-  
+
     setModo(modo);
     setMantenimientoSeleccionado({
       ...mantenimiento,
@@ -93,7 +93,6 @@ export default function HomeMantenimientos() {
     });
     setShowModal(true);
   };
-  
 
   const handleSave = async () => {
     try {
@@ -351,19 +350,25 @@ export default function HomeMantenimientos() {
                             mantenimiento.fecha_salida
                           ).toLocaleDateString()}
                         </td>
-                        <td>
-                          <button
-                            className="btn btn-warning btn-sm me-2"
-                            onClick={() => handleShow("Editar", mantenimiento)}
-                          >
-                            <FontAwesomeIcon icon={faEdit} />
-                          </button>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleShow("Eliminar", mantenimiento)}
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                          </button>
+                        <td className="text-center">
+                          <div className="d-flex justify-content-center">
+                            <button
+                              className="btn btn-warning btn-sm me-2"
+                              onClick={() =>
+                                handleShow("Editar", mantenimiento)
+                              }
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                            </button>
+                            <button
+                              className="btn btn-danger btn-sm"
+                              onClick={() =>
+                                handleShow("Eliminar", mantenimiento)
+                              }
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

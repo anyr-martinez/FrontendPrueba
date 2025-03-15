@@ -53,7 +53,7 @@ export function mostrarAlertaError(mensaje, foco = "") {
         icon: 'error',
         confirmButtonText: 'Aceptar',
         showConfirmButton: false,
-        timer: 2500
+        timer: 1500
     });
     enfocarCampo(foco);
 }

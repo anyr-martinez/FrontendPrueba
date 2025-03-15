@@ -332,7 +332,7 @@ export default function HomeEquipo() {
                   }
                 />
               </Form.Group>
-              <Form.Group>
+              <Form.Group >
                 <Form.Label>Tipo</Form.Label>
                 <Form.Control
                   type="text"

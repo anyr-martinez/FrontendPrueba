@@ -101,11 +101,11 @@ const UserState = (props) => {
   };
 
   // Función para actualizar la contraseña de un usuario
-  const actualizarContrasena = async (id, nuevaContrasena) => {
+  const actualizarContrasena = async ({ id_usuario, contrasena }) => {
     try {
       const response = await AxiosPrivado.put(
-        `${UsuarioActualizarContrasena}/${id}`,
-        { contrasena: nuevaContrasena },
+        `${UsuarioActualizarContrasena}/${id_usuario}`,
+        { contrasena },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,9 +114,10 @@ const UserState = (props) => {
       );
       console.log("Contraseña actualizada con éxito:", response.data);
     } catch (error) {
-      console.error("Error al actualizar la contraseña:", error);
+      console.error("Error al actualizar la contraseña:", error.response?.data || error);
     }
   };
+  
 
   return (
     <UserContext.Provider
@@ -129,8 +130,8 @@ const UserState = (props) => {
         editarUsuario,
         eliminarUsuario,
         obtenerUsuarios,
-        actualizarContrasena, // Proveeremos la función para actualizar la contraseña
-        usuarios, // Proveeremos la lista de usuarios también
+        actualizarContrasena, 
+        usuarios, 
       }}
     >
       {props.children}
