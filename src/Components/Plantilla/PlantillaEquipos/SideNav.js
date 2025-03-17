@@ -73,12 +73,6 @@ const SideNav = () => {
         <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
             <MenuItem
-              path="/dashboard-equipments/reportes-equipo"
-              icon="fas fa-cogs"
-              label="Gestión de Reportes"
-              isActive={isActive}
-            />
-            <MenuItem
               path="/dashboard-maintenances"
               icon="fas fa-wrench"
               label="Gestión de Mantenimientos"

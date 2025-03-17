@@ -7,7 +7,6 @@ export const UsuarioActualizarContrasena = `/api/users/updatePassword`;
 export const ListarUsuarios = '/api/users/user';
 export const ActualizarUsuario = '/api/users/updateUser';
 export const CrearUsuario = '/api/users/register';
-//export const UsuarioName =  `/api/users/users`;
 export const EliminarUsuario = '/api/users/deleteUser';
 
 // Equipos endpoints
@@ -16,6 +15,7 @@ export const ListarEquipos = '/api/equipment/equipments';
 export const ObtenerEquipoById = '/api/equipment/equipments';
 export const ActualizarEquipo = '/api/equipment/updateEquipment';
 export const EliminarEquipo = '/api/equipment/deleteEquipment';
+export const ReporteEquipos =  '/api/equipment/reporte';
 
 // Mantenimiento endpoints
 export const GuardarMantenimiento = '/api/maintenance/create';

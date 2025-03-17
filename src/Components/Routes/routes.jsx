@@ -29,6 +29,7 @@ import GuardarEquipo from '../Plantilla/PlantillaEquipos/Home';
 import EliminarEquipo from "../Plantilla/PlantillaEquipos/Home";
 import ActualizarEquipo from "../Plantilla/PlantillaEquipos/Home";
 import ObtenerEquipoById  from "../Plantilla/PlantillaEquipos/Home";
+import ReporteEquipos from "../Plantilla/PlantillaEquipos/Home";
 
 //Mantenimientos 
 import HomeMantenimientos from '../Plantilla/PlantillaMantenimientos/Home';
@@ -60,6 +61,8 @@ export const routes = createBrowserRouter(
           <Route path="eliminar" element={<EliminarEquipo />} />
           <Route path="actualizar" element={<ActualizarEquipo />} />
           <Route path="obtenerM" element={<ObtenerEquipoById />} />
+          <Route path="reporte-equipos" element={<ReporteEquipos />}/>  
+      
         </Route>
 
         {/*Rutas Mantenimientos */}
@@ -81,6 +84,7 @@ export const routes = createBrowserRouter(
           <Route path="actualizarContrasena" element={<UsuarioActualizarContrasena />}/>          
         </Route>
       </Route>
+      
     </Route>
   )
 );

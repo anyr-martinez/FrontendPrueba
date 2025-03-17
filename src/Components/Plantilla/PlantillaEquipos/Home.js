@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import {
   ListarEquipos,
   GuardarEquipo,
   ActualizarEquipo,
   EliminarEquipo,
+  ReporteEquipos,
 } from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
 import {
@@ -46,6 +47,25 @@ export default function HomeEquipo() {
         "Error al obtener los equipos:",
         error.response ? error.response.data.data : error
       );
+    }
+  };
+
+  const generarReportePDF = async () => {
+    try {
+      const response = await AxiosPrivado.get(ReporteEquipos, {
+        responseType: "arraybuffer", // Asegúrate de que la respuesta sea un archivo binario
+      });
+
+      // Crear un Blob con los datos binarios
+      const blob = new Blob([response.data], { type: "application/pdf" });
+
+      // Crear un enlace para descargar el archivo
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "reporte_equipos.pdf";
+      link.click();
+    } catch (error) {
+      console.error("Error al generar el reporte PDF:", error);
     }
   };
 
@@ -252,6 +272,9 @@ export default function HomeEquipo() {
                 </select>
               </div>
             </div>
+            <Button variant="danger" onClick={generarReportePDF}>
+              <FontAwesomeIcon icon={faFilePdf} /> Generar Reporte
+            </Button>
           </div>
 
           {/* Tabla de Equipos */}
@@ -332,7 +355,7 @@ export default function HomeEquipo() {
                   }
                 />
               </Form.Group>
-              <Form.Group >
+              <Form.Group>
                 <Form.Label>Tipo</Form.Label>
                 <Form.Control
                   type="text"
