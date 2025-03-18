@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   faLock,
   faTrash,
-  faUnlockAlt,
+  faFilePdf,
   faUserEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -87,7 +89,6 @@ export default function HomeUsuarios() {
           return;
         }
       }
-      
 
       let response;
 
@@ -199,6 +200,52 @@ export default function HomeUsuarios() {
     );
   });
 
+  const generarReportePDF = () => {
+    const doc = new jsPDF();
+
+    doc.addImage('logo2.jpg', 'JPEG', 15, 10, 35, 35);
+  
+    // Centrar el título
+    doc.setFontSize(20).setFont('helvetica', 'bold'); // Tamaño de fuente del título
+    const title = "Reporte de Usuarios";
+    const titleWidth = doc.getTextWidth(title);  // Calcular el ancho del título
+    const pageWidth = doc.internal.pageSize.getWidth(); // Ancho de la página
+    const titleX = (pageWidth - titleWidth) / 2;  // Calcular la posición X para centrar
+    doc.text(title, titleX, 40);  // Ajustar la posición Y según sea necesario
+  
+    // Generar la tabla
+    autoTable(doc, {
+      startY: 50,  // Posición de la tabla
+      head: [["ID", "Nombre", "Usuario", "Rol"]],
+      body: usuarios.map((usuario) => [
+        usuario.id_usuario,
+        usuario.nombre,
+        usuario.usuario,
+        usuario.rol,
+      ]),
+      headStyles:{
+        fillColor: [0, 114, 54],
+        textColor: 255,
+        fontStyle: 'bold',
+
+      },
+      styles: {
+        font: 'helvetica',
+        fontSize: 12,
+        halignalign: 'center',
+      },
+      bodyStyles: {
+        font: 'helvetica',
+        
+        
+      }
+    });
+  
+    // Guardar el PDF
+    doc.save("reporte_usuarios.pdf");
+  };
+  
+
   return (
     <div className="content-wrapper">
       <section className="content-header">
@@ -276,6 +323,9 @@ export default function HomeUsuarios() {
                 </select>
               </div>
             </div>
+            <Button variant="danger" onClick={generarReportePDF}>
+              <FontAwesomeIcon icon={faFilePdf} /> Generar Reporte
+            </Button>
           </div>
 
           <div className="card">
@@ -382,13 +432,11 @@ export default function HomeUsuarios() {
                   }
                   disabled={modo === "Actualizar Contraseña"}
                 >
-                  <option value="">Seleccione un Rol</option>
-                  <option value="admin">Administrador</option>
-                  <option value="usuario">Usuario</option>
+                  <option>Administrador</option>
+                  <option>Usuario</option>
                 </Form.Control>
               </Form.Group>
-              {/* Campo de Contraseña en el modo Agregar */}
-              {(modo === "Agregar"  || modo === "Actualizar Contraseña" ) && (
+              {modo !== "Actualizar Contraseña" && (
                 <>
                   <Form.Group>
                     <Form.Label>Contraseña</Form.Label>
@@ -401,7 +449,7 @@ export default function HomeUsuarios() {
                           contrasena: e.target.value,
                         })
                       }
-                      autoComplete="new-password"
+                      disabled={modo === "Editar"}
                     />
                   </Form.Group>
                   <Form.Group>
@@ -415,25 +463,24 @@ export default function HomeUsuarios() {
                           confirmarContrasena: e.target.value,
                         })
                       }
-                      autoComplete="new-password"
                     />
                   </Form.Group>
                 </>
               )}
             </Form>
           ) : (
-            <p>¿Estás seguro de que quieres eliminar este equipo?</p>
+            <p>
+              ¿Estás seguro de eliminar este usuario?{" "}
+              <strong>{usuarioseleccionado.nombre}</strong>
+            </p>
           )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cerrar
+            Cancelar
           </Button>
-          <Button
-            variant={modo === "Eliminar" ? "danger" : "primary"}
-            onClick={handleSave}
-          >
-            {modo === "Actualizar Contraseña" ? "Actualizar Contraseña" : modo}
+          <Button variant="primary" onClick={handleSave}>
+            {modo === "Eliminar" ? "Eliminar" : "Guardar"}
           </Button>
         </Modal.Footer>
       </Modal>

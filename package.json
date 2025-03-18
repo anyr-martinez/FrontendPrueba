@@ -22,7 +22,7 @@
     "crypto-js": "^4.2.0",
     "dialog": "^0.3.1",
     "init": "^0.1.2",
-    "jspdf": "^3.0.0",
+    "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
