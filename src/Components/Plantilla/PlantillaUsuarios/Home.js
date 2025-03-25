@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import logo3 from '../../../assets/images/logo3.jpg';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import {
@@ -40,6 +41,7 @@ export default function HomeUsuarios() {
     id: "",
     nombre: "",
     usuario: "",
+    incluirRoles: "conRoles",
   });
 
   useEffect(() => {
@@ -84,22 +86,53 @@ export default function HomeUsuarios() {
 
       // Validación para Confirmar Contraseña
       if (modo === "Agregar" || modo === "Actualizar Contraseña") {
-        if (usuarioseleccionado.contrasena !== usuarioseleccionado.confirmarContrasena) {
+        if (
+          usuarioseleccionado.contrasena !==
+          usuarioseleccionado.confirmarContrasena
+        ) {
           mostrarAlertaError("Las contraseñas no coinciden.");
           return;
         }
       }
 
+      // Verifica que usuarioseleccionado tiene los datos correctos
+      console.log("Usuario seleccionado para verificar:", usuarioseleccionado);
+
+      // Verificar si el usuario ya existe en la base de datos
+      try {
+        const verificarUsuario = await AxiosPublico.get(
+          `http://localhost:3000/api/users/users/${usuarioseleccionado.usuario}`
+        );
+
+        // Si el usuario existe y no es el mismo que estamos editando, se muestra el mensaje de error
+      if (verificarUsuario.status === 200 && usuarioseleccionado.id_usuario !== verificarUsuario.data.user.id_usuario) {
+        mostrarAlertaError('El Usuario ya existe!');
+        return; 
+      }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          // Si la respuesta es 404, significa que el usuario no existe, por lo que puedes proceder con el POST
+          console.log("Usuario no encontrado, podemos crear uno nuevo");
+        } else {
+          mostrarAlertaError("Error al verificar el usuario");
+          return;
+        }
+      }
+
+      // Si el usuario no existe, proceder con la creación (POST)
       let response;
 
       if (modo === "Agregar") {
-        console.log(usuarioseleccionado);
+        console.log("Usuario para crear:", usuarioseleccionado);
+
+        // Aquí asegúrate de que la URL y los datos de usuario sean correctos
         response = await AxiosPrivado.post(CrearUsuario, usuarioseleccionado, {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
         });
 
+        console.log("Respuesta del servidor:", response);
         setUsuarios((prevUsuarios) => [...prevUsuarios, response.data]);
         obtenerUsuarios();
         mostrarAlertaOK("Usuario Creado Exitosamente!");
@@ -113,6 +146,7 @@ export default function HomeUsuarios() {
             },
           }
         );
+
         setUsuarios((prevUsuarios) =>
           prevUsuarios.map((usuario) =>
             usuario.id_usuario === usuarioseleccionado.id_usuario
@@ -202,20 +236,22 @@ export default function HomeUsuarios() {
 
   const generarReportePDF = () => {
     const doc = new jsPDF();
+    const img = new Image();
+    img.src = logo3;
 
-    doc.addImage('logo2.jpg', 'JPEG', 15, 10, 35, 35);
-  
+    doc.addImage(img, "JPEG", 20, 18, 42, 30);
+
     // Centrar el título
-    doc.setFontSize(20).setFont('helvetica', 'bold'); // Tamaño de fuente del título
+    doc.setFontSize(20).setFont("helvetica", "bold"); // Tamaño de fuente del título
     const title = "Reporte de Usuarios";
-    const titleWidth = doc.getTextWidth(title);  // Calcular el ancho del título
+    const titleWidth = doc.getTextWidth(title); // Calcular el ancho del título
     const pageWidth = doc.internal.pageSize.getWidth(); // Ancho de la página
-    const titleX = (pageWidth - titleWidth) / 2;  // Calcular la posición X para centrar
-    doc.text(title, titleX, 40);  // Ajustar la posición Y según sea necesario
-  
+    const titleX = (pageWidth - titleWidth) / 2; // Calcular la posición X para centrar
+    doc.text(title, titleX, 40); // Ajustar la posición Y según sea necesario
+
     // Generar la tabla
     autoTable(doc, {
-      startY: 50,  // Posición de la tabla
+      startY: 50, // Posición de la tabla
       head: [["ID", "Nombre", "Usuario", "Rol"]],
       body: usuarios.map((usuario) => [
         usuario.id_usuario,
@@ -223,28 +259,24 @@ export default function HomeUsuarios() {
         usuario.usuario,
         usuario.rol,
       ]),
-      headStyles:{
+      headStyles: {
         fillColor: [0, 114, 54],
         textColor: 255,
-        fontStyle: 'bold',
-
+        fontStyle: "bold",
       },
       styles: {
-        font: 'helvetica',
+        font: "helvetica",
         fontSize: 12,
-        halignalign: 'center',
+        halignalign: "center",
       },
       bodyStyles: {
-        font: 'helvetica',
-        
-        
-      }
+        font: "helvetica",
+      },
     });
-  
+
     // Guardar el PDF
     doc.save("reporte_usuarios.pdf");
   };
-  
 
   return (
     <div className="content-wrapper">
@@ -272,7 +304,7 @@ export default function HomeUsuarios() {
           <div className="d-flex justify-content-between mb-3">
             <Button
               variant="success"
-              className="mr-3"
+              className="mr-2"
               onClick={() => handleShow("Agregar")}
             >
               Registrar Usuario
@@ -423,7 +455,7 @@ export default function HomeUsuarios() {
                 <Form.Label>Rol</Form.Label>
                 <Form.Control
                   as="select"
-                  value={usuarioseleccionado.rol}
+                  value={usuarioseleccionado.rol || ""}
                   onChange={(e) =>
                     setUsuarioSeleccionado({
                       ...usuarioseleccionado,
@@ -432,11 +464,12 @@ export default function HomeUsuarios() {
                   }
                   disabled={modo === "Actualizar Contraseña"}
                 >
-                  <option>Administrador</option>
-                  <option>Usuario</option>
+                  <option value="">Seleccione Un Rol</option>
+                  <option value="admin">Administrador</option>
+                  <option value="usuario">Usuario</option>
                 </Form.Control>
               </Form.Group>
-              {modo !== "Actualizar Contraseña" && (
+              {(modo === "Agregar" || modo === "Actualizar Contraseña") && (
                 <>
                   <Form.Group>
                     <Form.Label>Contraseña</Form.Label>
@@ -463,6 +496,7 @@ export default function HomeUsuarios() {
                           confirmarContrasena: e.target.value,
                         })
                       }
+                      disabled={modo === "Editar"}
                     />
                   </Form.Group>
                 </>
@@ -470,7 +504,7 @@ export default function HomeUsuarios() {
             </Form>
           ) : (
             <p>
-              ¿Estás seguro de eliminar este usuario?{" "}
+              ¿Estás seguro de eliminar este usuario? <br />
               <strong>{usuarioseleccionado.nombre}</strong>
             </p>
           )}

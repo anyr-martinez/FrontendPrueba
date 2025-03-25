@@ -402,7 +402,10 @@ export default function HomeEquipo() {
               </Form.Group>
             </Form>
           ) : (
-            <p>¿Estás seguro de que quieres eliminar este equipo?</p>
+            <p>
+            ¿Estás seguro de eliminar este usuario?{" "}<br />
+            <strong>{equipoSeleccionado.descripcion}</strong>
+          </p>
           )}
         </Modal.Body>
         <Modal.Footer>

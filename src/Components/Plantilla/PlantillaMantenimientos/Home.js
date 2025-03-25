@@ -8,7 +8,7 @@ import {
   GuardarMantenimiento,
   ActualizarMantenimiento,
   EliminarMantenimiento,
-  ListarEquipos, // Esta API es la que usas para obtener el equipo por ID
+  ListarEquipos, 
 } from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
 import {
@@ -387,7 +387,7 @@ export default function HomeMantenimientos() {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>{modo} Mantenimientos</Modal.Title>
+          <Modal.Title>{modo} Mantenimiento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {modo !== "Eliminar" ? (
@@ -453,7 +453,10 @@ export default function HomeMantenimientos() {
               </Form.Group>
             </Form>
           ) : (
-            <p>¿Estás seguro de que quieres eliminar este equipo?</p>
+            <p>
+            ¿Estás seguro de eliminar este usuario?{" "}<br />
+            <strong>{mantenimientoseleccionado.descripcion}</strong>
+          </p>
           )}
         </Modal.Body>
         <Modal.Footer>

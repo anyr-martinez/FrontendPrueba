@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo2 from "../../../assets/images/logo2.jpg";
-import { useContextUsuario } from "../../Context/user/UserContext"; // Importa el contexto
+import { useContextUsuario } from "../../Context/user/UserContext"; 
 
 const SideNav = () => {
   const navigate = useNavigate();

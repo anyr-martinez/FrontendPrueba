@@ -1,24 +1,29 @@
-import React from "react";
+import React,{ useEffect, useState }  from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { mostrarAlertaPregunta } from "../../SweetAlert/SweetAlert";
 import logo2 from "../../../assets/images/logo2.jpg";
+import { useContextUsuario } from "../../Context/user/UserContext"; 
 
 const SideNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { usuario } = useContextUsuario();
+  const [rol, setRol] = useState("");
 
-  const handleLogout = (e) => {
-    e.preventDefault();
-    mostrarAlertaPregunta(
-      (confirmed) => {
-        if (confirmed) {
-          navigate("/HomeAdmin"); // Redirige al inicio si se confirma
-        }
-      },
-      "¿Está seguro que desea regresar al Menú?",
-      "question"
-    );
-  };
+   // Asigna el rol cuando el usuario cambia
+    useEffect(() => {
+      if (usuario) {
+        setRol(usuario.rol === "admin" ? "Administrador" : "Usuario");
+      }
+    }, [usuario]);
+  
+    // Maneja la salida
+    const handleLogout = () => {
+      if (usuario && usuario.rol === "admin") {
+        navigate("/HomeAdmin"); // Redirige a HomeAdmin si es admin
+      } else {
+        navigate("/Home"); // Redirige a Home si es usuario
+      }
+    };
 
   const isActive = (path) => {
     return location.pathname === path
@@ -65,12 +70,6 @@ const SideNav = () => {
         <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
 
-          <MenuItem
-              path="/reportes-usuarios"
-              icon="fas fa-users"
-              label="Reportes de Usuarios"
-              isActive={isActive}
-            />
             <MenuItem
               path="/dashboard-equipments"
               icon="fas fa-laptop"

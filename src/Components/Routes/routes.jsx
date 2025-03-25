@@ -37,6 +37,10 @@ import ListarMantenimientos from "../Plantilla/PlantillaMantenimientos/Home";
 import GuardarMantenimiento from "../Plantilla/PlantillaMantenimientos/Home";
 import EliminarMantenimiento from "../Plantilla/PlantillaMantenimientos/Home";
 import ActualizarMantenimiento from "../Plantilla/PlantillaMantenimientos/Home";
+import ReporteMantenimientoTipo from "../Plantilla/PlantillaReportesMantenimientos/Home.js";
+
+//Reportes Mantenimientos
+import HomeReportes from '../Plantilla/PlantillaReportesMantenimientos/Home';
 
 // Importa Layout
 import { EquipmentsLayout } from '../Routes/EquimentsLayout';
@@ -83,8 +87,17 @@ export const routes = createBrowserRouter(
           <Route path="eliminarU" element={<EliminarUsuario />}/>
           <Route path="actualizarContrasena" element={<UsuarioActualizarContrasena />}/>          
         </Route>
+
+         {/* Reportes Mantenimientos */}
+        <Route path="/maintenances-reports" element={<UsersLayout />}>
+          <Route index element={<HomeReportes />} />
+          <Route path="listarM" element={<ListarMantenimientos />}/>
+          <Route path="reporte-tipo" element={<ReporteMantenimientoTipo />}/>  
+
+
       </Route>
-      
     </Route>
+      
+  </Route>
   )
 );

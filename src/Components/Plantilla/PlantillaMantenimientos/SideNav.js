@@ -81,6 +81,18 @@ const SideNav = () => {
           </ul>
         </nav>
       </div>
+      <div className="sidebar mt-3">
+        <nav>
+          <ul className="nav nav-pills nav-sidebar flex-column">
+            <MenuItem
+              path="/maintenances-reports"
+              icon="fas fa-file-alt"
+              label="Gestión de Reportes"
+              isActive={isActive}
+            />
+          </ul>
+        </nav>
+      </div>
 
       {/* Footer con botón de salir */}
       <div className="sidebar-footer p-3 border-top mt-auto text-center">

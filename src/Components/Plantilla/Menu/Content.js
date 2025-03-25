@@ -6,21 +6,21 @@ export default function Content() {
     <div className="content-wrapper" 
     style={{ backgroundColor: "#F0F0E6" }}>
       {/* Content Header */}
-      <div className="content-header d-flex justify-content-center align-items-center">
-        <div className="container-fluid text-center m-5">
+      <div className="content-header d-flex justify-content-center"style={{ height: "38vh" }}>
+        <div className="text-center" style={{ marginTop: "12vh" }}>
           <h1
-            className="m-3 text-center fw-bold"
+            className="text-success"
             style={{
               fontSize: "2.5rem",
-              letterSpacing: "2px",
+              letterSpacing: "1px",
               lineHeight: "1.2",
               color: "#007236",
               fontWeight: "900",
               textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
-              
+              marginTop: "5px"
             }}
           >
-            BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO TI 
+            BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO TI
           </h1>
         </div>
       </div>
