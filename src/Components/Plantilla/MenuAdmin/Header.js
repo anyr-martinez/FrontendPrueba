@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useContextUsuario } from "../../Context/user/UserContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import {  faUserShield, faUserCog } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -67,7 +67,7 @@ const Header = () => {
               data-target="#userModal"
             >
               <FontAwesomeIcon
-                icon={faUser}
+                icon={faUserShield}
                 style={{ color: "#FF7F32" }}
                 className="mr-2"
               />
@@ -125,7 +125,7 @@ const Header = () => {
             </div>
             <div className="modal-body text-center">
               <FontAwesomeIcon
-                icon={faUser}
+                icon={faUserCog}
                 size="4x"
                 style={{ color: "#FF7F32" }}
                 className="mb-3"

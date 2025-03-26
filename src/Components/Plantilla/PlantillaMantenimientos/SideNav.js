@@ -8,7 +8,7 @@ const SideNav = () => {
   const location = useLocation();
   const { usuario } = useContextUsuario();
   const [rol, setRol] = useState("");
-  
+
   // Asigna el rol cuando el usuario cambia
   useEffect(() => {
     if (usuario) {
@@ -106,7 +106,9 @@ const SideNav = () => {
             fontWeight: "900",
             borderRadius: "10px",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseEnter={(e) =>
+            (e.target.style.background = "rgba(230, 39, 6, 0.7)")
+          }
           onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
@@ -122,10 +124,14 @@ const MenuItem = ({ path, icon, label, isActive }) => (
   <li className="nav-item">
     <Link
       to={path}
-      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(path)}`}
+      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(
+        path
+      )}`}
     >
       <i className={`nav-icon ${icon} me-2`} style={{ color: "#ffffff" }}></i>
-      <p className="m-0" style={{ color: "#ffffff" }}>{label}</p>
+      <p className="m-0" style={{ color: "#ffffff" }}>
+        {label}
+      </p>
     </Link>
   </li>
 );

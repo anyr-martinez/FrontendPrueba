@@ -11,7 +11,7 @@ export const useSessionStorage = (keyName, defaultValue) => {
         
         if (decryptedValue && typeof decryptedValue === "string") {
           try {
-            const parsedValue = JSON.parse(decryptedValue);  //Valor desencriptado y parseado
+            const parsedValue = JSON.parse(decryptedValue);  //Valor desencriptado y parseado(convertido)
             return parsedValue;
           } catch (error) {
             console.error(`Error al parsear JSON desencriptado (${keyName}):`, error);

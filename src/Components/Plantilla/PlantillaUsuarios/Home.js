@@ -239,7 +239,7 @@ export default function HomeUsuarios() {
     const img = new Image();
     img.src = logo3;
 
-    doc.addImage(img, "JPEG", 20, 18, 42, 30);
+    doc.addImage(img, "JPEG", 20, 20, 40, 28);
 
     // Centrar el título
     doc.setFontSize(20).setFont("helvetica", "bold"); // Tamaño de fuente del título
@@ -275,7 +275,7 @@ export default function HomeUsuarios() {
     });
 
     // Guardar el PDF
-    doc.save("reporte_usuarios.pdf");
+    doc.save("Reporte_Usuarios.pdf");
   };
 
   return (

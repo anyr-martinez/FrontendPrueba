@@ -1,7 +1,7 @@
-import React,{ useEffect, useState }  from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo2 from "../../../assets/images/logo2.jpg";
-import { useContextUsuario } from "../../Context/user/UserContext"; 
+import { useContextUsuario } from "../../Context/user/UserContext";
 
 const SideNav = () => {
   const navigate = useNavigate();
@@ -9,28 +9,28 @@ const SideNav = () => {
   const { usuario } = useContextUsuario();
   const [rol, setRol] = useState("");
 
-   // Asigna el rol cuando el usuario cambia
-    useEffect(() => {
-      if (usuario) {
-        setRol(usuario.rol === "admin" ? "Administrador" : "Usuario");
-      }
-    }, [usuario]);
-  
-    // Maneja la salida
-    const handleLogout = () => {
-      if (usuario && usuario.rol === "admin") {
-        navigate("/HomeAdmin"); // Redirige a HomeAdmin si es admin
-      } else {
-        navigate("/Home"); // Redirige a Home si es usuario
-      }
-    };
+  // Asigna el rol cuando el usuario cambia
+  useEffect(() => {
+    if (usuario) {
+      setRol(usuario.rol === "admin" ? "Administrador" : "Usuario");
+    }
+  }, [usuario]);
+
+  // Maneja la salida
+  const handleLogout = () => {
+    if (usuario && usuario.rol === "admin") {
+      navigate("/HomeAdmin"); // Redirige a HomeAdmin si es admin
+    } else {
+      navigate("/Home"); // Redirige a Home si es usuario
+    }
+  };
 
   const isActive = (path) => {
     return location.pathname === path
       ? "active bg-white text-dark shadow-lg rounded"
       : "text-black";
   };
-  
+
   return (
     <aside
       className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column"
@@ -62,14 +62,15 @@ const SideNav = () => {
             borderRadius: "50%",
           }}
         />
-        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236"}}>Cooperativa Taulabé</p>
+        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236" }}>
+          Cooperativa Taulabé
+        </p>
       </div>
 
       {/* Menú */}
       <div className="sidebar mt-3">
         <nav>
           <ul className="nav nav-pills nav-sidebar flex-column">
-
             <MenuItem
               path="/dashboard-equipments"
               icon="fas fa-laptop"
@@ -82,7 +83,6 @@ const SideNav = () => {
               label="Gestión de Mantenimientos"
               isActive={isActive}
             />
-            
           </ul>
         </nav>
       </div>
@@ -99,7 +99,9 @@ const SideNav = () => {
             fontWeight: "bold",
             borderRadius: "5px",
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseEnter={(e) =>
+            (e.target.style.background = "rgba(230, 39, 6, 0.7)")
+          }
           onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
@@ -115,10 +117,14 @@ const MenuItem = ({ path, icon, label, isActive }) => (
   <li className="nav-item">
     <Link
       to={path}
-      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(path)}`}
+      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(
+        path
+      )}`}
     >
-      <i className={`nav-icon ${icon} me-2`} style={{color: "#ffffff"}}></i>
-      <p className="m-0" style={{color: "#ffffff"}}>{label}</p>
+      <i className={`nav-icon ${icon} me-2`} style={{ color: "#ffffff" }}></i>
+      <p className="m-0" style={{ color: "#ffffff" }}>
+        {label}
+      </p>
     </Link>
   </li>
 );

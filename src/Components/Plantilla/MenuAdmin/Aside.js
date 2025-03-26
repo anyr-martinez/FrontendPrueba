@@ -26,7 +26,7 @@ const Aside = () => {
       ? "active bg-white text-dark shadow-lg rounded"
       : "text-black";
   };
-  
+
   return (
     <aside
       className="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column"
@@ -58,7 +58,9 @@ const Aside = () => {
             borderRadius: "50%",
           }}
         />
-        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236"}}>Cooperativa Taulabé</p>
+        <p className="m-0 fs-5 fw-bold" style={{ color: "#007236" }}>
+          Cooperativa Taulabé
+        </p>
       </div>
 
       <div className="sidebar mt-3">
@@ -82,7 +84,6 @@ const Aside = () => {
               label="Gestión de Usuarios"
               isActive={isActive}
             />
-            
           </ul>
         </nav>
       </div>
@@ -98,9 +99,10 @@ const Aside = () => {
             transition: "all 0.3s ease",
             fontWeight: "900",
             borderRadius: "9px",
-            
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseEnter={(e) =>
+            (e.target.style.background = "rgba(230, 39, 6, 0.7)")
+          }
           onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
@@ -116,10 +118,14 @@ const MenuItem = ({ path, icon, label, isActive }) => (
   <li className="nav-item">
     <Link
       to={path}
-      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(path)}`}
+      className={`nav-link d-flex align-items-center py-2 px-3 rounded mb-2 ${isActive(
+        path
+      )}`}
     >
-      <i className={`nav-icon ${icon} me-2`} style={{color: "#ffffff"}}></i>
-      <p className="m-0" style={{color: "#ffffff"}}>{label}</p>
+      <i className={`nav-icon ${icon} me-2`} style={{ color: "#ffffff" }}></i>
+      <p className="m-0" style={{ color: "#ffffff" }}>
+        {label}
+      </p>
     </Link>
   </li>
 );

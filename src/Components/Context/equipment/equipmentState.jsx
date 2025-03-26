@@ -27,7 +27,7 @@ export const EquipmentState = (props) => {
     try {
       const respuesta = await AxiosPublico.get(ListarEquipos);
       const data = respuesta.data;
-      setListaEquipos(data); // Asume que la respuesta ya es un array de equipos
+      setListaEquipos(data); 
     } catch (error) {
       console.log("Error al listar equipos:", error);
     }
@@ -71,7 +71,7 @@ export const EquipmentState = (props) => {
     try {
       const respuesta = await AxiosPrivado.put(`${ActualizarEquipo}/${id_equipo}`, equipoActualizado);
       if (respuesta.status === 200) {
-        await ActualizarLista(); // Recargar la lista de equipos después de actualizar
+        await ActualizarLista(); 
         return { success: true, message: "Equipo actualizado correctamente" };
       }
     } catch (error) {

@@ -9,6 +9,7 @@ import {
   ActualizarEquipo,
   EliminarEquipo,
   ReporteEquipos,
+  ReporteEquiposTerminados,
 } from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
 import {
@@ -31,7 +32,6 @@ export default function HomeEquipo() {
   const [filtros, setFiltros] = useState({
     id: "",
     tipo: "",
-    fecha_registro: "",
   });
 
   useEffect(() => {
@@ -50,19 +50,25 @@ export default function HomeEquipo() {
     }
   };
 
-  const generarReportePDF = async () => {
+  const generarReportePDF = async (tipo) => {
     try {
-      const response = await AxiosPrivado.get(ReporteEquipos, {
-        responseType: "arraybuffer", // Asegúrate de que la respuesta sea un archivo binario
-      });
+      //Definir la URL segun el tipo de reporte
+      const urlReporte =
+        tipo === "inactivos" ? ReporteEquiposTerminados : ReporteEquipos;
 
+      const response = await AxiosPrivado.get(urlReporte, {
+        responseType: "blob",
+      });
       // Crear un Blob con los datos binarios
       const blob = new Blob([response.data], { type: "application/pdf" });
 
       // Crear un enlace para descargar el archivo
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "reporte_equipos.pdf";
+      link.download =
+        tipo === "inactivos"
+          ? "Reporte_Equipos_Inactivos.pdf"
+          : "Reporte_Equipos.pdf";
       link.click();
     } catch (error) {
       console.error("Error al generar el reporte PDF:", error);
@@ -187,9 +193,7 @@ export default function HomeEquipo() {
   const filteredEquipos = equipos.filter((equipo) => {
     return (
       (filtros.id === "" || equipo.id_equipo.toString().includes(filtros.id)) &&
-      (filtros.tipo === "" || equipo.tipo === filtros.tipo) &&
-      (filtros.fecha_registro === "" ||
-        equipo.fecha_registro === filtros.fecha_registro)
+      (filtros.tipo === "" || equipo.tipo === filtros.tipo)
     );
   });
 
@@ -216,7 +220,7 @@ export default function HomeEquipo() {
 
       <section className="content">
         <div className="container-fluid">
-          <div className="d-flex justify-content-between mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-3">
             {/* Botón para agregar equipo */}
             <Button
               variant="success"
@@ -226,12 +230,9 @@ export default function HomeEquipo() {
               Agregar Equipo
             </Button>
 
-            {/* Filtros */}
-            <div
-              className="row"
-              style={{ marginLeft: "10%", marginRight: "auto" }}
-            >
-              <div className="col-md-3">
+            {/* Filtros centrados */}
+            <div className="row mx-auto text-center d-flex justify-content-center">
+              <div className="col-md-4">
                 <input
                   type="text"
                   className="form-control"
@@ -241,7 +242,7 @@ export default function HomeEquipo() {
                   onChange={handleFilterChange}
                 />
               </div>
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <select
                   className="form-control"
                   name="tipo"
@@ -256,25 +257,23 @@ export default function HomeEquipo() {
                   ))}
                 </select>
               </div>
-              <div className="col-md-4">
-                <select
-                  className="form-control"
-                  name="fecha_registro"
-                  value={filtros.fecha_registro}
-                  onChange={handleFilterChange}
-                >
-                  <option value="">Filtrar por Fecha </option>
-                  {obtenerValoresUnicos("fecha_registro").map((fecha) => (
-                    <option key={fecha} value={fecha}>
-                      {new Date(fecha).toLocaleDateString()}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
-            <Button variant="danger" onClick={generarReportePDF}>
-              <FontAwesomeIcon icon={faFilePdf} /> Generar Reporte
-            </Button>
+
+            {/* Botones de reporte alineados a la derecha */}
+            <div className="d-flex gap-2">
+              <Button
+                variant="danger"
+                onClick={() => generarReportePDF("activos")}
+              >
+                <FontAwesomeIcon icon={faFilePdf} /> Generar Reporte
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => generarReportePDF("inactivos")}
+              >
+                <FontAwesomeIcon icon={faFilePdf} /> Generar Reporte Inactivos
+              </Button>
+            </div>
           </div>
 
           {/* Tabla de Equipos */}
@@ -290,7 +289,7 @@ export default function HomeEquipo() {
                     <th>Descripción</th>
                     <th>Tipo</th>
                     <th>Número de Serie</th>
-                    <th>Fecha de Registro</th>
+                    <th className="text-center">Fecha de Registro</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -302,9 +301,16 @@ export default function HomeEquipo() {
                         <td>{equipo.id_equipo}</td>
                         <td>{equipo.descripcion}</td>
                         <td>{equipo.tipo}</td>
-                        <td>{equipo.numero_serie}</td>
-                        <td>
-                          {new Date(equipo.fecha_registro).toLocaleDateString()}
+                        <td className="text-center">{equipo.numero_serie}</td>
+                        <td className="text-center">
+                          {new Date(equipo.fecha_registro).toLocaleDateString(
+                            "es-ES",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }
+                          )}
                         </td>
                         <td>
                           <button
@@ -403,9 +409,9 @@ export default function HomeEquipo() {
             </Form>
           ) : (
             <p>
-            ¿Estás seguro de eliminar este usuario?{" "}<br />
-            <strong>{equipoSeleccionado.descripcion}</strong>
-          </p>
+              ¿Estás seguro de eliminar este usuario? <br />
+              <strong>{equipoSeleccionado.descripcion}</strong>
+            </p>
           )}
         </Modal.Body>
         <Modal.Footer>

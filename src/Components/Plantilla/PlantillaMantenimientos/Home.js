@@ -8,7 +8,7 @@ import {
   GuardarMantenimiento,
   ActualizarMantenimiento,
   EliminarMantenimiento,
-  ListarEquipos, 
+  ListarEquipos,
 } from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
 import {
@@ -316,16 +316,16 @@ export default function HomeMantenimientos() {
               className="card-body"
               style={{ maxHeight: "400px", overflowY: "auto" }}
             >
-              <table className="table table-bordered table-striped text-center ">
+              <table className="table table-bordered table-striped">
                 <thead>
-                  <tr className="text-center align-middle">
-                    <th>ID</th>
-                    <th>Equipo</th>
-                    <th>Serie</th>
-                    <th>Descripcion</th>
-                    <th>Fecha de Entrada</th>
-                    <th>Fecha de Salida</th>
-                    <th>Acciones</th>
+                  <tr>
+                    <th className="align-middle">ID</th>
+                    <th className="align-middle">Equipo</th>
+                    <th className="align-middle text-center">Serie</th>
+                    <th className="align-middle">Descripcion</th>
+                    <th className="text-center">Fecha de Entrada</th>
+                    <th className="text-center">Fecha de Salida</th>
+                    <th className="align-middle">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -338,18 +338,29 @@ export default function HomeMantenimientos() {
                       >
                         <td>{mantenimiento.id_mantenimiento}</td>
                         <td>{mantenimiento.equipo_descripcion}</td>
-                        <td>{mantenimiento.numero_serie}</td>
+                        <td className="text-center">
+                          {mantenimiento.numero_serie}
+                        </td>
                         <td>{mantenimiento.descripcion}</td>
-                        <td>
+                        <td className="text-center">
                           {new Date(
                             mantenimiento.fecha_entrada
-                          ).toLocaleDateString()}
+                          ).toLocaleDateString("es-ES", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </td>
-                        <td>
+                        <td className="text-center">
                           {new Date(
                             mantenimiento.fecha_salida
-                          ).toLocaleDateString()}
+                          ).toLocaleDateString("es-ES", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </td>
+
                         <td className="text-center">
                           <div className="d-flex justify-content-center">
                             <button
@@ -454,9 +465,9 @@ export default function HomeMantenimientos() {
             </Form>
           ) : (
             <p>
-            ¿Estás seguro de eliminar este usuario?{" "}<br />
-            <strong>{mantenimientoseleccionado.descripcion}</strong>
-          </p>
+              ¿Estás seguro de eliminar este usuario? <br />
+              <strong>{mantenimientoseleccionado.descripcion}</strong>
+            </p>
           )}
         </Modal.Body>
         <Modal.Footer>

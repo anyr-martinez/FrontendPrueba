@@ -23,7 +23,7 @@ export const useLocalStorage = (keyName, defaultValue) => {
       const valueToStore = newValue instanceof Function ? newValue(storedValue) : newValue;
       
       // Save to localStorage
-      window.localStorage.setItem(keyName, JSON.stringify(valueToStore)); // Fixed newVakye typo
+      window.localStorage.setItem(keyName, JSON.stringify(valueToStore)); 
       
       // Save state
       setStoredValue(valueToStore);

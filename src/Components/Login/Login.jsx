@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import fondo from "../../assets/images/fondo.jpg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +12,7 @@ import {
 } from "../SweetAlert/SweetAlert";
 import { UserContext } from "../Context/user/UserContext";
 import { useSessionStorage } from "../Context/storage/useSessionStorage";
-import useSpecialLogin from "../../hooks/useSpecialLogin"; // Hook personalizado
+import useSpecialLogin from "../../hooks/useSpecialLogin"; 
 
 const Login = () => {
   const [usuario, setUsuario] = useState("");
@@ -49,7 +49,7 @@ const Login = () => {
             usuario: usuario,
             nombre: nombre,
             id: id,
-            rol: rol,  // Guardamos el rol aquí
+            rol: rol,  
           },
           token: token,
         });

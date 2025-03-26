@@ -17,6 +17,7 @@ import {
   mostrarAlertaWarning,
 } from "../../SweetAlert/SweetAlert";
 
+// Función para generar el reporte PDF
 const generarReportePDF = async (url, filtros, nombreReporte) => {
   try {
     const response = await AxiosPrivado.get(url, {
@@ -59,7 +60,8 @@ const HomeReportes = () => {
   const [tipos, setTipos] = useState([]);
   const [modalFecha, setModalFecha] = useState(false);
   const [modalTipo, setModalTipo] = useState(false);
-  const [tipoReporte, setTipoReporte] = useState(""); // Estado para gestionar el tipo de reporte
+  const [tipoReporte, setTipoReporte] = useState("");
+  const [tipoEquipo, settipoEquipo] = useState(""); // Añadir el estado tipoEquipo
 
   useEffect(() => {
     const obtenerTiposDesdeEquipos = async () => {
@@ -91,6 +93,7 @@ const HomeReportes = () => {
       filtros,
     });
 
+    // Generar reporte para equipos activos
     if (tipoReporte === "activos") {
       if (modalFecha) {
         generarReportePDF(
@@ -117,13 +120,16 @@ const HomeReportes = () => {
           return;
         }
 
+        // Generar el reporte PDF por tipo de equipo
         generarReportePDF(
           ReporteMantenimientoTipo,
           filtros,
-          "Mantenimientos_PorTipoDeEquipo.pdf"
+          `Mantenimientos_Tipo_${filtros.tipoEquipo}.pdf`
         );
       }
-    } else if (tipoReporte === "finalizados") {
+    }
+    // Generar reporte para equipos finalizados
+    else if (tipoReporte === "finalizados") {
       if (modalFecha) {
         generarReportePDF(
           ReporteMantenimientoFechaTerminado,
@@ -152,7 +158,7 @@ const HomeReportes = () => {
         generarReportePDF(
           ReporteMantenimientoTipoTerminado,
           filtros,
-          "Reporte_Por_Tipo_Finalizados.pdf"
+          `Mantenimientos_Tipo_${filtros.tipoEquipo}_Finalizados.pdf`
         );
       }
     }

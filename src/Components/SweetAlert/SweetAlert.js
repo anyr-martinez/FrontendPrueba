@@ -64,7 +64,7 @@ export function mostrarAlertaWarning(mensaje, foco = "") {
         icon: 'warning',
         confirmButtonText: 'Aceptar',
         showConfirmButton: false,
-        timer: 3000
+        timer: 1400
     });
     enfocarCampo(foco);
 }

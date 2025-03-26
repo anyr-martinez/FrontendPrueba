@@ -13,9 +13,6 @@ export const UserProvider = ({ children }) => {
     console.log(data)
     if (data && data.usuario) {
       setUsuario({
-        // usuario: data.usuario.usuario,
-        // login: true,
-        // id: data.usuario.id_usuario,
         ...data.usuario,
       });
       setToken(data.token); // Guarda el token

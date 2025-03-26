@@ -27,7 +27,7 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/"); 
+    navigate("/");
   };
 
   const handleNavigateHome = () => {
@@ -149,7 +149,9 @@ const Header = () => {
               </p>
               <p>
                 <strong>Fecha de Registro:</strong>{" "}
-                {fechaRegistro ? fechaRegistro.toLocaleDateString() : "Cargando..."}
+                {fechaRegistro
+                  ? fechaRegistro.toLocaleDateString()
+                  : "Cargando..."}
               </p>
             </div>
             <div className="modal-footer">

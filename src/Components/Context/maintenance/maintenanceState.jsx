@@ -27,7 +27,7 @@ export const MaintenanceState = (props) => {
     try {
       const respuesta = await AxiosPublico.get(ListarMantenimientos);
       const data = respuesta.data;
-      setListaMantenimiento(data); // Asume que la respuesta ya es un array de equipos
+      setListaMantenimiento(data); 
     } catch (error) {
       console.log("Error al listar mantenimientos:", error);
     }
@@ -38,7 +38,6 @@ export const MaintenanceState = (props) => {
     // Asignamos el token a la cabecera de la solicitud
     AxiosPrivado.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     
-    // Asegúrate de que el nuevo mantenimiento incluye el equipoId
     nuevoMantenimiento.id_equipo = equipoId;
     
     try {
@@ -47,7 +46,7 @@ export const MaintenanceState = (props) => {
       
       // Verificamos la respuesta del servidor
       if (respuesta.status === 201 || respuesta.status === 200) {
-        // Si todo salió bien, actualizamos la lista de equipos después de crear el mantenimiento
+        
         await ActualizarLista();
         
         return { success: true, message: "Mantenimiento creado correctamente" };
@@ -90,7 +89,7 @@ export const MaintenanceState = (props) => {
     try {
       const respuesta = await AxiosPrivado.put(`${ActualizarMantenimiento}/${id_mantenimiento}`, mantenimientoActualizado);
       if (respuesta.status === 200) {
-        await ActualizarLista(); // Recargar la lista de equipos después de actualizar
+        await ActualizarLista(); 
         return { success: true, message: "Mantenimiento actualizado correctamente" };
       }
     } catch (error) {

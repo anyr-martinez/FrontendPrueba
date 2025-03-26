@@ -1,13 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom"; 
-
+import { Link } from "react-router-dom";
 
 const Content = () => {
-
   return (
     <div className="content-wrapper" style={{ backgroundColor: "#F0F0E6" }}>
       {/* Content Header */}
-      <div className="content-header d-flex justify-content-center"style={{ height: "38vh" }}>
+      <div
+        className="content-header d-flex justify-content-center"
+        style={{ height: "38vh" }}
+      >
         <div className="text-center" style={{ marginTop: "12vh" }}>
           <h1
             className="text-success"
@@ -18,7 +19,7 @@ const Content = () => {
               color: "#007236",
               fontWeight: "900",
               textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
-              marginTop: "5px"
+              marginTop: "5px",
             }}
           >
             BIENVENIDO AL SISTEMA DE GESTIÓN DE INVENTARIO TI
@@ -34,7 +35,10 @@ const Content = () => {
             {/* Opción Equipos */}
             <div className="col-12 col-sm-6 col-lg-4">
               <Link to="/dashboard-equipments" className="text-decoration-none">
-                <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#007236" }}>
+                <div
+                  className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg"
+                  style={{ backgroundColor: "#007236" }}
+                >
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Equipos</h3>
                     <p className="mb-0">Gestión De Equipos</p>
@@ -48,8 +52,14 @@ const Content = () => {
 
             {/* Opción Mantenimientos */}
             <div className="col-12 col-sm-6 col-lg-4">
-              <Link to="/dashboard-maintenances" className="text-decoration-none">
-                <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#FF6600" }}>
+              <Link
+                to="/dashboard-maintenances"
+                className="text-decoration-none"
+              >
+                <div
+                  className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg"
+                  style={{ backgroundColor: "#FF6600" }}
+                >
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Mantenimientos</h3>
                     <p className="mb-0">Gestión De Mantenimientos</p>
@@ -64,7 +74,10 @@ const Content = () => {
             {/* Opción Usuarios */}
             <div className="col-12 col-sm-6 col-lg-4">
               <Link to="/dashboard-users" className="text-decoration-none">
-                <div className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg" style={{ backgroundColor: "#20B2AA" }}>
+                <div
+                  className="small-box rounded-3 h-100 position-relative overflow-hidden shadow-lg"
+                  style={{ backgroundColor: "#20B2AA" }}
+                >
                   <div className="inner p-4 text-white text-center">
                     <h3 className="h2 fw-bold mb-2">Usuarios</h3>
                     <p className="mb-0">Gestión De Usuarios</p>
@@ -80,6 +93,6 @@ const Content = () => {
       </section>
     </div>
   );
-}
+};
 
 export default Content;
