@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo3 from '../../../assets/images/logo3.jpg';
+import logo3 from "../../../assets/images/logo3.jpg";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import {
@@ -105,10 +105,14 @@ export default function HomeUsuarios() {
         );
 
         // Si el usuario existe y no es el mismo que estamos editando, se muestra el mensaje de error
-      if (verificarUsuario.status === 200 && usuarioseleccionado.id_usuario !== verificarUsuario.data.user.id_usuario) {
-        mostrarAlertaError('El Usuario ya existe!');
-        return; 
-      }
+        if (
+          verificarUsuario.status === 200 &&
+          usuarioseleccionado.id_usuario !==
+            verificarUsuario.data.user.id_usuario
+        ) {
+          mostrarAlertaError("El Usuario ya existe!");
+          return;
+        }
       } catch (error) {
         if (error.response && error.response.status === 404) {
           // Si la respuesta es 404, significa que el usuario no existe, por lo que puedes proceder con el POST
@@ -301,20 +305,20 @@ export default function HomeUsuarios() {
 
       <section className="content">
         <div className="container-fluid">
-          <div className="d-flex justify-content-between mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <Button
               variant="success"
-              className="mr-2"
+              className="w-auto"
               onClick={() => handleShow("Agregar")}
             >
               Registrar Usuario
             </Button>
 
             <div
-              className="row"
-              style={{ marginLeft: "10%", marginRight: "auto" }}
+              className="d-flex flex-wrap gap-2"
+              style={{ flexGrow: 1, justifyContent: "center" }}
             >
-              <div className="col-md-3">
+              <div className="col-md-2">
                 <input
                   type="text"
                   className="form-control"
@@ -324,7 +328,7 @@ export default function HomeUsuarios() {
                   onChange={handleFilterChange}
                 />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <select
                   className="form-control"
                   name="nombre"
@@ -339,7 +343,7 @@ export default function HomeUsuarios() {
                   ))}
                 </select>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-3">
                 <select
                   className="form-control"
                   name="usuario"
@@ -355,7 +359,12 @@ export default function HomeUsuarios() {
                 </select>
               </div>
             </div>
-            <Button variant="danger" onClick={generarReportePDF}>
+
+            <Button
+              variant="danger"
+              className="w-auto"
+              onClick={generarReportePDF}
+            >
               <FontAwesomeIcon icon={faFilePdf} /> Generar Reporte
             </Button>
           </div>
