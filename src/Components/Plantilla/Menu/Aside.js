@@ -93,11 +93,11 @@ const Aside = () => {
             color: "#bd2307",
             transition: "all 0.3s ease",
             fontWeight: "900",
-            borderRadius: "9px",
+            borderRadius: "12px",
             
           }}
-          onMouseEnter={(e) => (e.target.style.background = "rgba(230, 39, 6, 0.7)")}
-          onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Cerrar Sesión</span>

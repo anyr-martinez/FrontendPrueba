@@ -97,12 +97,10 @@ const SideNav = () => {
             color: "#bd2307",
             transition: "all 0.3s ease",
             fontWeight: "bold",
-            borderRadius: "5px",
+            borderRadius: "10px",
           }}
-          onMouseEnter={(e) =>
-            (e.target.style.background = "rgba(230, 39, 6, 0.7)")
-          }
-          onMouseLeave={(e) => (e.target.style.background = "#F0F0E6")}
+          onMouseEnter={(e) =>(e.currentTarget.style.background = "rgba(230, 39, 6, 0.7)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "#F0F0E6")}
         >
           <i className="fas fa-sign-out-alt"></i>
           <span>Salir</span>
