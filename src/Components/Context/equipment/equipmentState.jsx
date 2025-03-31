@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { EquipmentContext } from "./EquipmentContext";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
-import { ListarEquipos, GuardarEquipo,EliminarEquipo } from "../../Configuration/ApiUrls";
+import {  GuardarEquipo,EliminarEquipo, ListarEquiposActivos } from "../../Configuration/ApiUrls";
 import { useContextUsuario } from "../user/UserContext";
 
 export const EquipmentState = (props) => {
@@ -25,7 +25,7 @@ export const EquipmentState = (props) => {
   // Función para obtener la lista de equipos
   const ActualizarLista = async () => {
     try {
-      const respuesta = await AxiosPublico.get(ListarEquipos);
+      const respuesta = await AxiosPublico.get(ListarEquiposActivos);
       const data = respuesta.data;
       setListaEquipos(data); 
     } catch (error) {

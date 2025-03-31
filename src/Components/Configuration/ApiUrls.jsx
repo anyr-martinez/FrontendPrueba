@@ -12,6 +12,7 @@ export const EliminarUsuario = '/api/users/deleteUser';
 
 // Equipos endpoints
 export const GuardarEquipo = '/api/equipment/create';
+export const ListarEquiposActivos = '/api/equipment/equipments/active';
 export const ListarEquipos = '/api/equipment/equipments';
 export const ObtenerEquipoById = '/api/equipment/equipments';
 export const ActualizarEquipo = '/api/equipment/updateEquipment';
@@ -22,12 +23,11 @@ export const ReporteEquiposTerminados =  '/api/equipment/reporte/inactivos'
 // Mantenimiento endpoints
 export const GuardarMantenimiento = '/api/maintenance/create';
 export const ListarMantenimientos = '/api/maintenance/maintenances';
-export const ObtenerMantenimientoById = '/api/maintenance/maintenance/{id}';
+export const ObtenerMantenimientoById = '/api/maintenance/maintenances';
+export const ObtenerEstadoMantenimiento = '/api/maintenance/maintenance/status';
 export const ActualizarMantenimiento = '/api/maintenance/updateMaintenance';
 export const EliminarMantenimiento = '/api/maintenance/deleteMaintenance';
 export const ReporteMantenimientoFecha = '/api/maintenance/report/date';
-export const ReporteMantenimientoFechaTerminado = '/api/maintenance/reports/inactiveDate';
 export const ReporteMantenimientoTipo = '/api/maintenance/report/type';
-export const ReporteMantenimientoTipoTerminado = '/api/maintenance/reports/inactiveType';
 export const ReporteMantenimientoGeneral = '/api/maintenance/report';
-export const ReporteMantenimientoGeneralTerminado = '/api/maintenance/reports/general-inactive';
+

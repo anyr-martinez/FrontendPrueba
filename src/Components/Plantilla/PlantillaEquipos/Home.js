@@ -4,7 +4,7 @@ import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import {
-  ListarEquipos,
+  ListarEquiposActivos,
   GuardarEquipo,
   ActualizarEquipo,
   EliminarEquipo,
@@ -40,7 +40,7 @@ export default function HomeEquipo() {
 
   const obtenerEquipos = async () => {
     try {
-      const respuesta = await AxiosPublico.get(ListarEquipos);
+      const respuesta = await AxiosPublico.get(ListarEquiposActivos);
       setEquipos(respuesta.data.data);
     } catch (error) {
       console.error(

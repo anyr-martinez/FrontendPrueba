@@ -2,19 +2,22 @@ import React, { useState, useEffect } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { FaSyncAlt } from "react-icons/fa";
 import {
   ListarMantenimientos,
   GuardarMantenimiento,
   ActualizarMantenimiento,
-  EliminarMantenimiento,
   ListarEquipos,
+  ObtenerEstadoMantenimiento,
 } from "../../Configuration/ApiUrls";
 import { useSessionStorage } from "../../Context/storage/useSessionStorage";
 import {
   mostrarAlertaError,
   mostrarAlertaOK,
 } from "../../SweetAlert/SweetAlert";
+import Swal from "sweetalert2";
+import Select from "react-select"; // Importar react-select
 
 export default function HomeMantenimientos() {
   const [user] = useSessionStorage("user", {});
@@ -29,9 +32,10 @@ export default function HomeMantenimientos() {
     descripcion: "",
     fecha_entrada: "",
     fecha_salida: "",
+    estado: 0,
   });
   const [filtros, setFiltros] = useState({
-    id: "",
+    estado: "",
     fecha_entrada: "",
     fecha_salida: "",
   });
@@ -44,7 +48,6 @@ export default function HomeMantenimientos() {
   const obtenerMantenimientos = async () => {
     try {
       const respuesta = await AxiosPublico.get(ListarMantenimientos);
-
       setMantenimientos(respuesta.data.data);
     } catch (error) {
       console.error(
@@ -57,7 +60,7 @@ export default function HomeMantenimientos() {
   const obtenerEquipos = async () => {
     try {
       const response = await AxiosPublico.get(ListarEquipos);
-      setEquipos(response.data.data); // Suponiendo que la respuesta contiene los datos de los equipos
+      setEquipos(response.data.data);
     } catch (error) {
       console.error("Error al obtener los equipos:", error);
     }
@@ -73,11 +76,23 @@ export default function HomeMantenimientos() {
       descripcion: "",
       fecha_entrada: "",
       fecha_salida: "",
+      estado: 0,
     }
   ) => {
     console.log("Mantenimiento seleccionado para el modal:", mantenimiento);
 
-    // Convertir las fechas al formato adecuado (yyyy-mm-dd)
+    // Verificar si el estado es 2 (completado), y evitar abrir el modal de edición
+    if (mantenimiento.estado === 2 && modo === "Editar") {
+      Swal.fire({
+        title: "Estado Completado",
+        text: "Este mantenimiento ya está completado y no puede ser modificado.",
+        icon: "info",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+      return;
+    }
+
     const fechaEntrada = mantenimiento.fecha_entrada
       ? new Date(mantenimiento.fecha_entrada).toISOString().split("T")[0]
       : "";
@@ -101,6 +116,7 @@ export default function HomeMantenimientos() {
         window.location.href = "/home";
         return;
       }
+
       let response;
 
       if (modo === "Agregar") {
@@ -139,45 +155,9 @@ export default function HomeMantenimientos() {
         );
         obtenerMantenimientos();
         mostrarAlertaOK("Mantenimiento Actualizado Exitosamente!");
-      } else if (modo === "Eliminar") {
-        if (mantenimientoseleccionado.id_mantenimiento) {
-          try {
-            // Hacemos la solicitud DELETE pasando el ID en la URL
-            response = await AxiosPrivado.delete(
-              `${EliminarMantenimiento}/${mantenimientoseleccionado.id_mantenimiento}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                },
-              }
-            );
-
-            if (response.status === 200 || response.status === 201) {
-              setMantenimientos((prevMantenimientos) =>
-                prevMantenimientos.filter(
-                  (mantenimiento) =>
-                    mantenimiento.id_mantenimiento !==
-                    mantenimientoseleccionado.id_mantenimiento
-                )
-              );
-              obtenerMantenimientos();
-              mostrarAlertaOK("Mantenimiento Eliminado Exitosamente!");
-            } else {
-              mostrarAlertaError("Error al eliminar el mantenimiento");
-            }
-          } catch (error) {
-            console.error("Error al realizar la operación:", error);
-            if (error.response && error.response.status === 401) {
-              sessionStorage.removeItem("user");
-              window.location.href = "/";
-            }
-            mostrarAlertaError(
-              "Error al realizar la operación, por favor intenta nuevamente."
-            );
-          }
-        }
       }
-      setShowModal(false); // Cerrar el modal después de la operación
+
+      setShowModal(false);
     } catch (error) {
       console.error("Error al realizar la operación:", error);
       mostrarAlertaError(
@@ -191,6 +171,57 @@ export default function HomeMantenimientos() {
       ...new Set(mantenimientos.map((mantenimiento) => mantenimiento[campo])),
     ];
   };
+  const cambiarEstado = (mantenimiento) => {
+    if (mantenimiento.estado === 2) {
+      Swal.fire({
+        title: "Estado Completado",
+        text: "Este mantenimiento ya está completado.",
+        icon: "info",
+        showConfirmButton: false,
+        timer: 1900,
+      });
+      return; // Evita que continúe con el cambio de estado
+    }
+
+    const nuevoEstado = mantenimiento.estado === 0 ? 1 : 2; // De Pendiente → En proceso → Completado
+
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: `¿Quieres cambiar el estado a ${
+        nuevoEstado === 1 ? "En Proceso" : "Completado"
+      }?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, cambiar estado!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        actualizarEstado(mantenimiento.id_mantenimiento, nuevoEstado);
+      }
+    });
+  };
+
+  const actualizarEstado = async (id_mantenimiento, nuevoEstado) => {
+    try {
+      const response = await AxiosPrivado.put(
+        `${ObtenerEstadoMantenimiento}/${id_mantenimiento}`,
+        {
+          estado: nuevoEstado,
+        }
+      );
+
+      if (response.status === 200) {
+        mostrarAlertaOK("Estado Actualizado!");
+        obtenerMantenimientos();
+      } else {
+        throw new Error("Error al actualizar el estado");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarAlertaError("Error", "No se pudo actualizar el estado", "error");
+    }
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -201,18 +232,27 @@ export default function HomeMantenimientos() {
   };
 
   const filteredMantenimientos = mantenimientos.filter((mantenimiento) => {
+    const fechaEntrada = new Date(mantenimiento.fecha_entrada);
+    const fechaSalida = new Date(mantenimiento.fecha_salida);
+    const filtroFechaEntrada = filtros.fecha_entrada
+      ? new Date(filtros.fecha_entrada)
+      : null;
+    const filtroFechaSalida = filtros.fecha_salida
+      ? new Date(filtros.fecha_salida)
+      : null;
+
     return (
-      mantenimiento.estado === 1 &&
-      (filtros.id === "" ||
-        mantenimiento.id_mantenimiento.toString().includes(filtros.id)) &&
-      (filtros.fecha_entrada === "" ||
-        mantenimiento.fecha_entrada === filtros.fecha_entrada) &&
-      (filtros.fecha_salida === "" ||
-        mantenimiento.fecha_salida === filtros.fecha_salida)
+      // Filtrar por estado
+      (filtros.estado === "" ||
+        mantenimiento.estado.toString() === filtros.estado) &&
+      // Filtrar por fecha de entrada
+      (filtros.fecha_entrada === "" || fechaEntrada >= filtroFechaEntrada) &&
+      // Filtrar por fecha de salida
+      (filtros.fecha_salida === "" || fechaSalida <= filtroFechaSalida)
     );
   });
 
-  const handleIdChange = async (id) => {
+  const handleIdChange = (id) => {
     if (!id) return; // Si no hay ID, no hacer nada
 
     try {
@@ -229,6 +269,34 @@ export default function HomeMantenimientos() {
       }
     } catch (error) {
       console.error("Error al seleccionar el equipo:", error);
+    }
+  };
+
+  const equiposFiltrados = equipos.filter((equipo) => equipo.estado === 1);
+
+  const opciones = equipos
+    .filter(
+      (equipo) =>
+        equipo.estado === 1 ||
+        equipo.id_equipo === mantenimientoseleccionado.id_equipo
+    ) // Mostrar equipos activos y el equipo seleccionado
+    .map((equipo) => ({
+      value: equipo.id_equipo,
+      label: equipo.descripcion,
+    }));
+
+  const handleChange = (selectedOption) => {
+    if (selectedOption) {
+      setMantenimientoSeleccionado({
+        ...mantenimientoseleccionado,
+        id_equipo: selectedOption.value,
+      });
+    } else {
+      // Si no hay selección (es decir, el valor es null o undefined), puedes tomar alguna acción
+      setMantenimientoSeleccionado({
+        ...mantenimientoseleccionado,
+        id_equipo: null,
+      });
     }
   };
 
@@ -255,7 +323,9 @@ export default function HomeMantenimientos() {
 
       <section className="content">
         <div className="container-fluid">
-          <div className="d-flex justify-content-between mb-3">
+          {/* Fila con el botón y los filtros alineados a la izquierda */}
+          <div className="d-flex justify-content-start align-items-center mb-3">
+            {/* Botón de Agregar Mantenimiento */}
             <Button
               variant="success"
               className="mr-3"
@@ -263,53 +333,52 @@ export default function HomeMantenimientos() {
             >
               Agregar Mantenimiento
             </Button>
+
+            {/* Filtros para Mantenimientos */}
             <div
-              className="row"
-              style={{ marginLeft: "10%", marginRight: "auto" }}
+              className="d-flex align-items-center"
+              style={{ marginLeft: "165px" }}
             >
-              <div className="col-md-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Filtrar por ID"
-                  name="id"
-                  value={filtros.id}
-                  onChange={handleFilterChange}
-                />
-              </div>
-              <div className="col-md-5">
+              <div className="col-md-4 ">
                 <select
+                  name="estado"
                   className="form-control"
-                  name="fecha_entrada"
-                  value={filtros.fecha_entrada}
+                  value={filtros.estado}
                   onChange={handleFilterChange}
                 >
-                  <option value="">Filtrar por Fecha de Entrada</option>
-                  {obtenerValoresUnicos("fecha_entrada").map((fecha) => (
-                    <option key={fecha} value={fecha}>
-                      {new Date(fecha).toLocaleDateString()}
-                    </option>
-                  ))}
+                  <option value="">Filtrar por estado</option>
+                  <option value="0">Pendiente</option>
+                  <option value="1">En Proceso</option>
+                  <option value="2">Completado</option>
                 </select>
               </div>
-              <div className="col-md-4">
-                <select
-                  className="form-control"
-                  name="fecha_salida"
-                  value={filtros.fecha_salida}
-                  onChange={handleFilterChange}
-                >
-                  <option value="">Filtrar por Fecha de Salida</option>
-                  {obtenerValoresUnicos("fecha_salida").map((fecha) => (
-                    <option key={fecha} value={fecha}>
-                      {new Date(fecha).toLocaleDateString()}
-                    </option>
-                  ))}
-                </select>
+
+              {/* Contenedor para "Fecha de Entrada" y "Fecha de Salida" */}
+              <div className="d-flex gap-3">
+                <div className="col-md-5 ">
+                  <input
+                    type="date"
+                    name="fecha_entrada"
+                    className="form-control"
+                    id="fecha_entrada"
+                    value={filtros.fecha_entrada}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+
+                <div className="col-md-5 ">
+                  <input
+                    type="date"
+                    name="fecha_salida"
+                    className="form-control"
+                    id="fecha_salida"
+                    value={filtros.fecha_salida}
+                    onChange={handleFilterChange}
+                  />
+                </div>
               </div>
             </div>
           </div>
-
           {/* Tabla de Mantenimientos */}
           <div className="card">
             <div
@@ -318,26 +387,30 @@ export default function HomeMantenimientos() {
             >
               <table className="table table-bordered table-striped">
                 <thead>
-                  <tr>
-                    <th className="align-middle">ID</th>
-                    <th className="align-middle">Equipo</th>
-                    <th className="align-middle text-center">Serie</th>
-                    <th className="align-middle">Descripcion</th>
+                  <tr className="align-middle">
+                    <th className="text-center align-middle">ID</th>
+                    <th className="text-left align-middle">Equipo</th>
+                    <th className="text-center align-middle">Serie</th>
+                    <th className="text-center align-middle">Descripción</th>
                     <th className="text-center">Fecha de Entrada</th>
                     <th className="text-center">Fecha de Salida</th>
-                    <th className="align-middle">Acciones</th>
+                    <th className="text-center align-middle">Estado</th>
+                    <th className="text-center align-middle">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredMantenimientos
-                    .filter((mantenimiento) => mantenimiento.estado === 1)
-                    .map((mantenimiento) => (
-                      <tr
-                        key={mantenimiento.id_mantenimiento}
-                        className="align-middle"
-                      >
+                  {filteredMantenimientos.map((mantenimiento) => {
+                    const equipo = equipos.find(
+                      (equipo) => equipo.id_equipo === mantenimiento.id_equipo
+                    );
+
+                    return (
+                      <tr key={mantenimiento.id_mantenimiento}>
                         <td>{mantenimiento.id_mantenimiento}</td>
-                        <td>{mantenimiento.equipo_descripcion}</td>
+                        <td>
+                          {/* Mostrar la descripción del equipo */}
+                          {equipo ? equipo.descripcion : "Equipo no encontrado"}
+                        </td>
                         <td className="text-center">
                           {mantenimiento.numero_serie}
                         </td>
@@ -345,44 +418,63 @@ export default function HomeMantenimientos() {
                         <td className="text-center">
                           {new Date(
                             mantenimiento.fecha_entrada
-                          ).toLocaleDateString("es-ES", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}
+                          ).toLocaleDateString()}
                         </td>
                         <td className="text-center">
                           {new Date(
                             mantenimiento.fecha_salida
-                          ).toLocaleDateString("es-ES", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}
+                          ).toLocaleDateString()}
                         </td>
-
                         <td className="text-center">
-                          <div className="d-flex justify-content-center">
+                          <button
+                            className={`btn btn-sm ${
+                              mantenimiento.estado === 0
+                                ? "btn-danger"
+                                : mantenimiento.estado === 1
+                                ? "btn-warning"
+                                : "btn-info"
+                            } rounded-pill text-white`}
+                            style={{
+                              padding: "4px 8px",
+                              fontSize: "0.875rem",
+                              opacity: 1,
+                              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                            }}
+                          >
+                            {mantenimiento.estado === 0
+                              ? "Pendiente"
+                              : mantenimiento.estado === 1
+                              ? "En proceso"
+                              : "Completado"}
+                          </button>
+                        </td>
+                        <td className="text-center">
+                          <div className="d-flex justify-content-center align-items-center gap-2">
+                            {/* Botón de cambiar estado */}
                             <button
-                              className="btn btn-warning btn-sm me-2"
+                              onClick={() => cambiarEstado(mantenimiento)}
+                              className="btn btn-sm btn-outline-secondary d-flex align-items-center"
+                            >
+                              <FaSyncAlt
+                                className="me-1"
+                                title="Cambiar Estado"
+                              />
+                            </button>
+
+                            {/* Botón de Editar */}
+                            <button
+                              className="btn btn-warning btn-sm btn-lg d-flex align-items-center"
                               onClick={() =>
                                 handleShow("Editar", mantenimiento)
                               }
                             >
-                              <FontAwesomeIcon icon={faEdit} />
-                            </button>
-                            <button
-                              className="btn btn-danger btn-sm"
-                              onClick={() =>
-                                handleShow("Eliminar", mantenimiento)
-                              }
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
+                              <FontAwesomeIcon icon={faEdit} className="me-1" />
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -405,24 +497,19 @@ export default function HomeMantenimientos() {
             <Form>
               <Form.Group controlId="equipo">
                 <Form.Label>Equipo</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={mantenimientoseleccionado.id_equipo}
-                  onChange={(e) => {
-                    handleIdChange(e.target.value);
-                    console.log("Seleccion");
-                  }}
-                >
-                  <option value="">Seleccione un equipo</option>
-                  {equipos
-                    .filter((equipo) => equipo.estado === 1) // Filtramos solo los equipos activos
-                    .map((equipo) => (
-                      <option key={equipo.descripcion} value={equipo.id_equipo}>
-                        {equipo.descripcion}
-                      </option>
-                    ))}
-                </Form.Control>
+                <Select
+                  options={opciones}
+                  value={opciones.find(
+                    (option) =>
+                      option.value === mantenimientoseleccionado.id_equipo // Usa el mismo tipo para comparar
+                  )}
+                  onChange={handleChange}
+                  placeholder="Buscar equipo..."
+                  isClearable
+                  isSearchable
+                />
               </Form.Group>
+
               <Form.Group controlId="descripcion">
                 <Form.Label>Descripción</Form.Label>
                 <Form.Control

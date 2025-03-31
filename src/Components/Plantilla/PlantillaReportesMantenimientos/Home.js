@@ -5,11 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import {
   ReporteMantenimientoFecha,
-  ReporteMantenimientoFechaTerminado,
   ReporteMantenimientoTipo,
-  ReporteMantenimientoTipoTerminado,
   ReporteMantenimientoGeneral,
-  ReporteMantenimientoGeneralTerminado,
   ListarEquipos,
 } from "../../Configuration/ApiUrls";
 import {
@@ -56,27 +53,23 @@ const HomeReportes = () => {
     startDate: "",
     endDate: "",
     tipoEquipo: "",
+    estado: "",  // Añadido el filtro de estado
   });
   const [tipos, setTipos] = useState([]);
   const [modalFecha, setModalFecha] = useState(false);
   const [modalTipo, setModalTipo] = useState(false);
+  const [modalGeneral, setModalGeneral] = useState(false); // Modal para reporte general
   const [tipoReporte, setTipoReporte] = useState("");
-  const [tipoEquipo, settipoEquipo] = useState(""); // Añadir el estado tipoEquipo
 
   useEffect(() => {
     const obtenerTiposDesdeEquipos = async () => {
       try {
         const response = await AxiosPublico.get(ListarEquipos);
-        console.log("Respuesta de la API:", response.data); // Verifica la estructura
-
-        // Extraer el array correctamente desde response.data.data
         const equipos = response.data.data;
 
         if (Array.isArray(equipos)) {
           const tiposUnicos = [...new Set(equipos.map((e) => e.tipo))];
           setTipos(tiposUnicos);
-        } else {
-          console.error("Error: La respuesta no es un array", equipos);
         }
       } catch (error) {
         console.error("Error al obtener equipos", error);
@@ -86,41 +79,16 @@ const HomeReportes = () => {
   }, []);
 
   const handleGenerarReporte = () => {
-    console.log("handleGenerarReporte se ejecutó", {
-      tipoReporte,
-      modalFecha,
-      modalTipo,
-      filtros,
-    });
-
-    // Generar reporte para equipos activos
+    // Lógica para generar el reporte
     if (tipoReporte === "activos") {
+      // Reporte por fecha (activos)
       if (modalFecha) {
         generarReportePDF(
           ReporteMantenimientoFecha,
-          filtros,
+          filtros, // Incluye el estado en los filtros
           "Reporte_Fecha_Mantenimientos.pdf"
         );
       } else if (modalTipo) {
-        if (!filtros.tipoEquipo) {
-          console.log("No se seleccionó un tipo de equipo");
-          mostrarAlertaWarning(
-            "Seleccione un tipo de equipo antes de generar el reporte."
-          );
-          return;
-        }
-
-        if (!tipos.includes(filtros.tipoEquipo)) {
-          console.log(
-            `No se encontró el tipo de equipo "${filtros.tipoEquipo}" en los equipos registrados.`
-          );
-          mostrarAlertaError(
-            `No se encontró el tipo de equipo "${filtros.tipoEquipo}" en los equipos registrados.`
-          );
-          return;
-        }
-
-        // Generar el reporte PDF por tipo de equipo
         generarReportePDF(
           ReporteMantenimientoTipo,
           filtros,
@@ -128,43 +96,32 @@ const HomeReportes = () => {
         );
       }
     }
-    // Generar reporte para equipos finalizados
-    else if (tipoReporte === "finalizados") {
-      if (modalFecha) {
-        generarReportePDF(
-          ReporteMantenimientoFechaTerminado,
-          filtros,
-          "Fecha_Mantenimientos_Finalizados.pdf"
-        );
-      } else if (modalTipo) {
-        if (!filtros.tipoEquipo) {
-          console.log("No se seleccionó un tipo de equipo");
-          mostrarAlertaWarning(
-            "Seleccione un tipo de equipo antes de generar el reporte."
-          );
-          return;
-        }
-
-        if (!tipos.includes(filtros.tipoEquipo)) {
-          console.log(
-            `No se encontró el tipo de equipo "${filtros.tipoEquipo}" en los equipos finalizados.`
-          );
-          mostrarAlertaError(
-            `No se encontró el tipo de equipo "${filtros.tipoEquipo}" en los equipos finalizados.`
-          );
-          return;
-        }
-
-        generarReportePDF(
-          ReporteMantenimientoTipoTerminado,
-          filtros,
-          `Mantenimientos_Tipo_${filtros.tipoEquipo}_Finalizados.pdf`
-        );
+    // Reporte general
+    else if (tipoReporte === "general") {
+      // Asumimos que 'filtros.estado' es un número (0, 1 o 2)
+      let estadoNombre = "Todos"; 
+      
+      if (filtros.estado === "0") {
+        estadoNombre = "Pendientes";
+      } else if (filtros.estado === "1") {
+        estadoNombre = "En Proceso";
+      } else if (filtros.estado === "2") {
+        estadoNombre = "Completados";
       }
+    
+      // Llamamos a la función generarReportePDF con el nombre adecuado
+      generarReportePDF(
+        ReporteMantenimientoGeneral,
+        { estado: filtros.estado },
+        `Reporte_General_Mantenimientos_${estadoNombre}.pdf`
+      );
     }
+    
 
+    // Cerrar los modales después de generar el reporte
     setModalFecha(false);
     setModalTipo(false);
+    setModalGeneral(false); // Cerrar modal de reporte general
   };
 
   return (
@@ -205,7 +162,7 @@ const HomeReportes = () => {
                 }}
                 className="me-2 mb-2"
               >
-                <FontAwesomeIcon icon={faFilePdf} /> Reporte por Fecha (Activos)
+                <FontAwesomeIcon icon={faFilePdf} /> Reporte por Fecha
               </Button>
 
               <Button
@@ -217,18 +174,15 @@ const HomeReportes = () => {
                 className="me-2 mb-2"
               >
                 <FontAwesomeIcon icon={faFilePdf} /> Reporte por Tipo de Equipo
-                (Activos)
+                
               </Button>
 
               <Button
                 variant="danger"
-                onClick={() =>
-                  generarReportePDF(
-                    ReporteMantenimientoGeneral,
-                    {},
-                    "Reporte_General_Mantenimientos.pdf"
-                  )
-                }
+                onClick={() => {
+                  setTipoReporte("general");
+                  setModalGeneral(true); // Mostrar modal para reporte general
+                }}
                 className="me-2 mb-2"
               >
                 <FontAwesomeIcon icon={faFilePdf} /> Reporte General
@@ -236,55 +190,14 @@ const HomeReportes = () => {
             </div>
           </div>
         </div>
-        <div className="container-fluid">
-          <div className="card">
-            <div className="card-body text-center">
-              <Button
-                variant="danger"
-                onClick={() => {
-                  setModalFecha(true);
-                  setTipoReporte("finalizados");
-                }}
-                className="me-2 mb-2"
-              >
-                <FontAwesomeIcon icon={faFilePdf} /> Reporte por Fecha
-                (Finalizados)
-              </Button>
-
-              <Button
-                variant="danger"
-                onClick={() => {
-                  setModalTipo(true);
-                  setTipoReporte("finalizados");
-                }}
-                className="me-2 mb-2"
-              >
-                <FontAwesomeIcon icon={faFilePdf} /> Reporte por Tipo de Equipo
-                (Finalizados)
-              </Button>
-
-              <Button
-                variant="danger"
-                onClick={() =>
-                  generarReportePDF(
-                    ReporteMantenimientoGeneralTerminado,
-                    {},
-                    "Reporte_General_Finalizados.pdf"
-                  )
-                }
-                className="me-2 mb-2"
-              >
-                <FontAwesomeIcon icon={faFilePdf} /> Reporte General Finalizados
-              </Button>
-            </div>
-          </div>
-        </div>
       </section>
+
+      {/* Modales para seleccionar filtros */}
 
       {/* Modal para Reporte por Fecha */}
       <Modal show={modalFecha} onHide={() => setModalFecha(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Seleccionar Rango de Fechas</Modal.Title>
+          <Modal.Title>Seleccionar Rango de Fechas y Estado</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -306,6 +219,20 @@ const HomeReportes = () => {
                 }
               />
             </Form.Group>
+            <Form.Group>
+              <Form.Label>Estado</Form.Label>
+              <Form.Control
+                as="select"
+                onChange={(e) =>
+                  setFiltros({ ...filtros, estado: e.target.value })
+                }
+              >
+                <option value="">Seleccione un estado</option>
+                <option value="0">Pendiente</option>
+                <option value="1">En Proceso</option>
+                <option value="2">Completado</option>
+              </Form.Control>
+            </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -321,7 +248,7 @@ const HomeReportes = () => {
       {/* Modal para Reporte por Tipo */}
       <Modal show={modalTipo} onHide={() => setModalTipo(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Seleccionar Tipo de Equipo</Modal.Title>
+          <Modal.Title>Seleccionar Tipo de Equipo y Estado</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -333,18 +260,65 @@ const HomeReportes = () => {
                   setFiltros({ ...filtros, tipoEquipo: e.target.value })
                 }
               >
-                <option value="">Seleccione un tipo</option>
-                {tipos.map((tipoEquipo, index) => (
-                  <option key={index} value={tipoEquipo}>
-                    {tipoEquipo}
+                <option value="">Seleccione un tipo de equipo</option>
+                {tipos.map((tipo, index) => (
+                  <option key={index} value={tipo}>
+                    {tipo}
                   </option>
                 ))}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Estado</Form.Label>
+              <Form.Control
+                as="select"
+                onChange={(e) =>
+                  setFiltros({ ...filtros, estado: e.target.value })
+                }
+              >
+                <option value="">Seleccione un estado</option>
+                <option value="0">Pendiente</option>
+                <option value="1">En Proceso</option>
+                <option value="2">Completado</option>
               </Form.Control>
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setModalTipo(false)}>
+            Cerrar
+          </Button>
+          <Button variant="danger" onClick={handleGenerarReporte}>
+            Generar Reporte
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal para Reporte General */}
+      <Modal show={modalGeneral} onHide={() => setModalGeneral(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Seleccionar Estado para Reporte General</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>Estado</Form.Label>
+              <Form.Control
+                as="select"
+                onChange={(e) =>
+                  setFiltros({ ...filtros, estado: e.target.value })
+                }
+              >
+                <option value="">Seleccione un estado</option>
+                <option value="0">Pendiente</option>
+                <option value="1">En Proceso</option>
+                <option value="2">Completado</option>
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setModalGeneral(false)}>
             Cerrar
           </Button>
           <Button variant="danger" onClick={handleGenerarReporte}>
