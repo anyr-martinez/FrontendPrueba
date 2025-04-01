@@ -93,7 +93,7 @@ const Login = () => {
                     <form onSubmit={handleSubmit}> {/* Conexión con el submit */}
                       <div className="d-flex align-items-center mb-3 pb-1">
                         <i className="fas fa-cog fa-2x me-3" style={{ color: '#007236' }}></i>
-                        <span className="h1 fw-bold mb-0">Iniciar sesión</span>
+                        <span className="h1 fw-bold mb-0">Iniciar Sesión</span>
                       </div>
   
                       {/* Campo de Usuario */}
