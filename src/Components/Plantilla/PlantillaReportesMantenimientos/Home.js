@@ -98,9 +98,8 @@ const HomeReportes = () => {
     }
     // Reporte general
     else if (tipoReporte === "general") {
-      // Asumimos que 'filtros.estado' es un número (0, 1 o 2)
-      let estadoNombre = "Todos"; 
-      
+      // Si 'filtros.estado' está vacío, significa que seleccionaron "Todos"
+      let estadoNombre = "Todos";
       if (filtros.estado === "0") {
         estadoNombre = "Pendientes";
       } else if (filtros.estado === "1") {
@@ -108,21 +107,21 @@ const HomeReportes = () => {
       } else if (filtros.estado === "2") {
         estadoNombre = "Completados";
       }
-    
-      // Llamamos a la función generarReportePDF con el nombre adecuado
+  
+      // Llamar a la función generarReportePDF con el nombre adecuado
       generarReportePDF(
         ReporteMantenimientoGeneral,
-        { estado: filtros.estado },
+        { estado: filtros.estado || "todos" },  // Pasar "todos" si el estado está vacío
         `Reporte_General_Mantenimientos_${estadoNombre}.pdf`
       );
     }
-    
-
+  
     // Cerrar los modales después de generar el reporte
     setModalFecha(false);
     setModalTipo(false);
     setModalGeneral(false); // Cerrar modal de reporte general
   };
+    
 
   return (
     <div className="content-wrapper">
@@ -228,6 +227,7 @@ const HomeReportes = () => {
                 }
               >
                 <option value="">Seleccione un estado</option>
+                <option value="3">Todos</option>
                 <option value="0">Pendiente</option>
                 <option value="1">En Proceso</option>
                 <option value="2">Completado</option>
@@ -310,6 +310,7 @@ const HomeReportes = () => {
                 }
               >
                 <option value="">Seleccione un estado</option>
+                <option value="3">Todos</option>
                 <option value="0">Pendiente</option>
                 <option value="1">En Proceso</option>
                 <option value="2">Completado</option>
