@@ -277,7 +277,7 @@ const HomeReportes = () => {
                 }
               >
                 <option value="">Seleccione un estado</option>
-                <option value="0">Pendiente</option>
+                <option value="0">Pendiente</option> 
                 <option value="1">En Proceso</option>
                 <option value="2">Completado</option>
               </Form.Control>
