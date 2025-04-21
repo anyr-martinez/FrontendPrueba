@@ -1,5 +1,5 @@
 import React from 'react';
-import { MaintenanceState} from "../Context/maintenance/MaintenanceState";
+import { MaintenanceState} from "../Context/maintenance/maintenanceState";
 import Maintenances from '../Maintenances/Maintenances';
 
 export const MaintenancesLayout = () => {

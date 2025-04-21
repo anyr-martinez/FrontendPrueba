@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { EquipmentContext } from "./EquipmentContext";
+import { EquipmentContext } from "../equipment/equipmentContext";
 import { AxiosPrivado, AxiosPublico } from "../../Axios/Axios";
 import {  GuardarEquipo,EliminarEquipo, ListarEquiposActivos } from "../../Configuration/ApiUrls";
 import { useContextUsuario } from "../user/UserContext";
